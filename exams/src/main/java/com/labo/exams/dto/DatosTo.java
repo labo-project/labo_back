@@ -1,11 +1,17 @@
 package com.labo.exams.dto;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 
-@AllArgsConstructor
+import lombok.Data;
+
+
+@Data
 public class DatosTo {
     
     private Long idExamen;
     private String apellido;
+    private Boolean estado;
+    private List<PruebasTo> pruebas;
+
 
 }
