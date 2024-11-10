@@ -22,8 +22,8 @@ public class Test {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "area_id", nullable = false)
-    private Area area;
+    @JoinColumn(name = "exam_id", nullable = false)
+    private Exam exam;
 
     @Column(name = "catalog_test_id", nullable = false)
     private Long testId;
