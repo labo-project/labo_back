@@ -17,7 +17,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8082  # Different port for each service
+  port: 8083  # Different port for each service
 
 # Eureka Client Configuration
 # eureka:
