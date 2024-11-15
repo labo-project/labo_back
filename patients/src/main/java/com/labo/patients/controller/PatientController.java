@@ -11,7 +11,6 @@ import com.labo.patients.repo.model.Patient;
 import com.labo.patients.service.IPatientService;
 
 @RestController
-@RequestMapping("/patients")
 public class PatientController {
 
     @Autowired

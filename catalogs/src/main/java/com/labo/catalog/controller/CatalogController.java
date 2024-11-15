@@ -11,7 +11,6 @@ import com.labo.catalog.repository.model.CatalogTest;
 import com.labo.catalog.service.ICatalogService;
 
 @RestController
-@RequestMapping("/catalogs")
 public class CatalogController {
     @Autowired
     private ICatalogService catalogService;
