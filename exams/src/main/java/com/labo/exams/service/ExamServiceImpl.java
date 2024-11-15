@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.labo.exams.clients.CatalogClient;
 import com.labo.exams.clients.PatientClient;
 import com.labo.exams.dto.DatosTo;
 import com.labo.exams.dto.PatientTo;
@@ -23,6 +24,8 @@ public class ExamServiceImpl implements IExamService {
     private PatientClient patientServiceClient;
     @Autowired
     private IExamRepo examRepo;
+    @Autowired
+    private CatalogClient catalogServiceClient;
 
     @Override
     public List<DatosTo> showPendingExams() {
@@ -49,7 +52,10 @@ public class ExamServiceImpl implements IExamService {
 
     private PruebasTo mapToPruebasTo(Test test) {
         PruebasTo pruebasTo = new PruebasTo();
-        // Map test properties to PruebasTo
+        var catalog = this.catalogServiceClient.getCatalogById(test.getTestId()).block();
+
+        pruebasTo.setNombrePrueba(catalog.getName());
+        pruebasTo.setValor(test.getResult());
         return pruebasTo;
     }
 

@@ -1,5 +1,6 @@
 package com.labo.exams.repo.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -29,7 +30,7 @@ public class Test {
     private Long testId;
 
     @Column
-    private String result;
+    private BigDecimal result;
 
     @Column(name = "completion_date")
     private LocalDateTime completionDate;
