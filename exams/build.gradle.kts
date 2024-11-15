@@ -22,4 +22,8 @@ dependencies {
     // implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     // runtimeOnly("org.postgresql:postgresql")
     // testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webflux
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.5")
+    implementation("io.projectreactor:reactor-core")
+
 }

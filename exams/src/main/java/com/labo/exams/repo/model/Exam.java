@@ -3,6 +3,8 @@ package com.labo.exams.repo.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,8 +36,9 @@ public class Exam {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Test> areas;
+    private List<Test> tests;
 
     @PrePersist
     protected void onCreate() {
