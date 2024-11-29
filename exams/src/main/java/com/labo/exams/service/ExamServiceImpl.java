@@ -31,11 +31,14 @@ public class ExamServiceImpl implements IExamService {
     public List<DatosTo> showPendingExams() {
       List<Exam> exams = this.examRepo.buscarTodos();
         return exams.stream()
+                .filter(exam -> exam.getTests() != null && !exam.getTests().isEmpty())
                 .map(this::mapToDataTo)
                 .collect(Collectors.toList());
     }
 
     private DatosTo mapToDataTo(Exam exam) {
+
+
         DatosTo datosTo = new DatosTo();
         datosTo.setIdExamen(exam.getId());
 
@@ -55,7 +58,7 @@ public class ExamServiceImpl implements IExamService {
         var catalog = this.catalogServiceClient.getCatalogById(test.getTestId()).block();
 
         pruebasTo.setNombrePrueba(catalog.getName());
-        pruebasTo.setValor(test.getResult());
+        pruebasTo.setValor(null);
         return pruebasTo;
     }
 
