@@ -13,4 +13,4 @@ plugins {
 }
 
 rootProject.name = "labo_back"
-include("catalogs", "exams", "patients", "api-gateway")
+include("catalogs", "exams", "patients", "api-gateway", "iam")
