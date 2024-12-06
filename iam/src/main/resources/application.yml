@@ -1,14 +1,8 @@
-# src/main/resources/application.yml
 spring:
-
   security:
     user:
       name: admin
       password: admin
-jwt:
-  secret: your-secret-key-at-least-256-bits-long-for-HS256
-  expiration: 3600 # 1 hour in seconds
-
   application:
     name: iam  # Change this for each service
   datasource:
@@ -25,10 +19,13 @@ jwt:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+jwt:
+  secret: your-secret-key-at-least-256-bits-long-for-HS256
+  expiration: 3600 # 1 hour in seconds
+
 server:
   port: 8090  # Different port for each service
 
-# Logging Configuration
 logging:
   level:
     org:
@@ -38,4 +35,3 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
-
