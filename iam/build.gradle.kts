@@ -4,22 +4,21 @@
 
 plugins {
     id("buildlogic.java-library-conventions")
-    // id("buildlogic.java-application-conventions")
-    // id("org.springframework.boot") version "2.6.3" apply false
-    // id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
-    // kotlin("jvm") version "1.6.10" apply false
-    // kotlin("plugin.spring") version "1.6.10" apply false
-    // kotlin("plugin.jpa") version "1.6.10" apply false
+
 }
 
 
 
 dependencies {
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-web")
-    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // implementation("org.jetbrains.kotlin:kotlin-reflect")
-    // implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    // runtimeOnly("org.postgresql:postgresql")
-    // testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // Existing dependencies
+    implementation("org.springframework.boot:spring-boot-starter-security:3.2.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    // https://mvnrepository.com/artifact/com.auth0/java-jwt
+    implementation("com.auth0:java-jwt:4.4.0")
+
+    
+    // Add these
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    
 }
