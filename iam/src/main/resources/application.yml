@@ -1,8 +1,4 @@
 spring:
-  security:
-    user:
-      name: admin
-      password: admin
   application:
     name: iam  # Change this for each service
   datasource:

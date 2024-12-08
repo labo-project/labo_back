@@ -12,9 +12,11 @@ import com.labo.iam.repo.IUserRepo;
 import com.labo.iam.repo.model.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final IUserRepo userRepository;
@@ -22,18 +24,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        return new org.springframework.security.core.userdetails.User(
-            user.getUsername(), 
-            user.getPassword(), 
-            user.getIsActive(),
-            true, // account not expired
-            true, // credentials not expired
-            true, // account not locked
-            user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList())
-        );
+        log.info("Found user: " + user.getUsername());
+        log.info("Encoded password: " + user.getPassword());
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles("USER") // For simplicity
+                .build();
     }
 }
