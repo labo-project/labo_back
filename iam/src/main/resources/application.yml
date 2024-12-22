@@ -1,6 +1,6 @@
 spring:
   application:
-    name: iam  # Change this for each service
+    name: iam # Change this for each service
   datasource:
     url: jdbc:postgresql://localhost:5432/labexams
     username: postgres
@@ -16,11 +16,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 jwt:
-  secret: your-secret-key-at-least-256-bits-long-for-HS256
+  secret: 1our-secret-key-at-least-256-bits-long-for-HS256
   expiration: 3600 # 1 hour in seconds
 
 server:
-  port: 8090  # Different port for each service
+  port: 8090 # Different port for each service
 
 logging:
   level:
