@@ -21,22 +21,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final IUserRepo userRepository;
+        private final IUserRepo userRepository;
 
-    @Override
-public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-    // Map roles to GrantedAuthority (e.g., ROLE_USER, ROLE_ADMIN)
-    List<GrantedAuthority> authorities = user.getRoles().stream()
-            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()))
-            .collect(Collectors.toList());
+                // Map roles to GrantedAuthority (e.g., ROLE_USER, ROLE_ADMIN)
+                List<GrantedAuthority> authorities = user.getRoles().stream()
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()))
+                                .collect(Collectors.toList());
 
-    return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .authorities(authorities) // Use authorities instead of roles
-            .build();
-}
+                return org.springframework.security.core.userdetails.User.builder()
+                                .username(user.getUsername())
+                                .password(user.getPassword())
+                                .authorities(authorities) // Use authorities instead of roles
+                                .build();
+        }
 }

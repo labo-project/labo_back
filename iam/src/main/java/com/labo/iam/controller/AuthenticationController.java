@@ -57,7 +57,7 @@ public class AuthenticationController {
         }
     }
 
-    // @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<?> adminEndpoint() {
         return ResponseEntity.ok("Admin access granted!");
