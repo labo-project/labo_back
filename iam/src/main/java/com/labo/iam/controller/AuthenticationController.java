@@ -63,4 +63,9 @@ public class AuthenticationController {
         return ResponseEntity.ok("Admin access granted!");
     }
 
+    @GetMapping("/any")
+    public ResponseEntity<?> anyEndpoint() {
+        return ResponseEntity.ok("Any access granted!");
+    }
+
 }

@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
- 
+    implementation("org.springframework.boot:spring-boot-starter-security:3.2.3")
+    implementation(project(":common-security"))
 }
 
 // bootJar {
