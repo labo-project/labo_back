@@ -1,0 +1,7 @@
+jwt:
+  secret: 1our-secret-key-at-least-256-bits-long-for-HS256
+  expiration: 3600 # 1 hour in seconds
+logging:
+  level:
+    org.springframework.context: DEBUG
+

@@ -17,16 +17,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.labo.iam.service.CustomUserDetailsService;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final CustomUserDetailsService userDetailsService;
+    // private final CustomUserDetailsService userDetailsService;
     private final JwtRequestFilter jwtAuthFilter;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtRequestFilter jwtAuthFilter) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JwtRequestFilter jwtAuthFilter) {
+        // this.userDetailsService = userDetailsService;
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
