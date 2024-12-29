@@ -1,7 +1,7 @@
 // Root project build.gradle.kts
 plugins {
     id("buildlogic.java-application-conventions")
-    id("org.springframework.boot") version "3.3.4" apply false
+    id("org.springframework.boot") version "3.2.3" apply false
     id("io.spring.dependency-management") version "1.1.6" apply false
     kotlin("jvm") version "2.0.21" apply false
     kotlin("plugin.spring") version "2.0.21" apply false
@@ -23,19 +23,20 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.springframework.boot:spring-boot-starter:3.3.4")
+        implementation("org.springframework.boot:spring-boot-starter:3.2.3")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        // implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
         
         // Lombok dependencies
         compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
         testCompileOnly("org.projectlombok:lombok")
         testAnnotationProcessor("org.projectlombok:lombok")
-
+        
         runtimeOnly("org.postgresql:postgresql")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
@@ -53,7 +54,26 @@ subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
+            jvmTarget = "21"
         }
     }
+
+    // extra["springCloudVersion"] = "2023.0.0"
+    
+    // dependencyManagement {
+    //     imports {
+    //         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    //     }
+    // }
 }
+
+// // Add Spring Cloud dependency management to all projects
+// subprojects {
+    // extra["springCloudVersion"] = "2023.0.0"
+    
+    // dependencyManagement {
+    //     imports {
+    //         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    //     }
+    // }
+// }
