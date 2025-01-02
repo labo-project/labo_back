@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,15 +35,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) {
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = extractTokenFromRequest(request);
             if (token != null && validateToken(token)) {
                 Claims claims = extractClaims(token);
-                setSecurityContext(claims);
+                setSecurityContext(claims, token); // Modified to include token
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            log.error("Authentication error: ", e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -82,21 +86,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setSecurityContext(Claims claims) {
+    private void setSecurityContext(Claims claims, String token) {
         String username = claims.getSubject();
         List<?> rolesRaw = claims.get("roles", List.class);
-        List<String> roles = rolesRaw.stream()
-                .filter(role -> role instanceof String)
-                .map(role -> (String) role)
-                .collect(Collectors.toList());
-        List<SimpleGrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (rolesRaw != null) {
+            authorities = rolesRaw.stream()
+                    .filter(role -> role instanceof String)
+                    .map(role -> new SimpleGrantedAuthority((String) role))
+                    .collect(Collectors.toList());
+        }
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, token,
                 authorities);
-
-        log.info("Authentication: {}", authentication);        
+        log.debug("Setting authentication: {}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
