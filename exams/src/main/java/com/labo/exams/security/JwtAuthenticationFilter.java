@@ -1,4 +1,4 @@
-package com.labexams.security;
+package com.labo.exams.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,9 +30,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) {
         try {
             String token = extractTokenFromRequest(request);
             if (token != null && validateToken(token)) {
@@ -83,7 +84,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setSecurityContext(Claims claims) {
         String username = claims.getSubject();
-        List<String> roles = claims.get("roles", List.class);
+        List<?> rolesRaw = claims.get("roles", List.class);
+        List<String> roles = rolesRaw.stream()
+                .filter(role -> role instanceof String)
+                .map(role -> (String) role)
+                .collect(Collectors.toList());
         List<SimpleGrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -94,4 +99,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("Authentication: {}", authentication);        
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
 }

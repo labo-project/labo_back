@@ -4,26 +4,14 @@
 
 plugins {
     id("buildlogic.java-library-conventions")
-    // id("buildlogic.java-application-conventions")
-    // id("org.springframework.boot") version "2.6.3" apply false
-    // id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
-    // kotlin("jvm") version "1.6.10" apply false
-    // kotlin("plugin.spring") version "1.6.10" apply false
-    // kotlin("plugin.jpa") version "1.6.10" apply false
 }
 
 
 
 dependencies {
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-web")
-    // implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // implementation("org.jetbrains.kotlin:kotlin-reflect")
-    // implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    // runtimeOnly("org.postgresql:postgresql")
-    // testImplementation("org.springframework.boot:spring-boot-starter-test")
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webflux
     implementation("org.springframework.boot:spring-boot-starter-webflux:3.3.5")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.2.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("io.projectreactor:reactor-core")
-
+    
 }
