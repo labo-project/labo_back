@@ -1,25 +1,25 @@
-package com.labexams.security;
+package com.labo.patients.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -29,9 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) {
+        protected void doFilterInternal(@NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) {
         try {
             String token = extractTokenFromRequest(request);
             if (token != null && validateToken(token)) {
@@ -83,7 +83,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setSecurityContext(Claims claims) {
         String username = claims.getSubject();
-        List<String> roles = claims.get("roles", List.class);
+        List<?> rolesRaw = claims.get("roles", List.class);
+        List<String> roles = rolesRaw.stream()
+                .filter(role -> role instanceof String)
+                .map(role -> (String) role)
+                .collect(Collectors.toList());
         List<SimpleGrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -94,4 +98,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("Authentication: {}", authentication);        
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
 }

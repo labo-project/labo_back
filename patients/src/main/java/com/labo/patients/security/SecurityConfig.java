@@ -1,4 +1,4 @@
-package com.labexams.security;
+package com.labo.patients.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

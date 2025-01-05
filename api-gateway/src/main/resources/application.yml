@@ -37,6 +37,12 @@ spring:
             - Path=/catalogs/**
           filters:
             - StripPrefix=1
+        - id: iam
+          uri: http://localhost:8090
+          predicates:
+            - Path=/iam/**
+          filters:
+            - StripPrefix=1
 
   autoconfigure:
     exclude:
