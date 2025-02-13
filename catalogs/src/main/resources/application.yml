@@ -1,11 +1,12 @@
 # src/main/resources/application.yml
 spring:
   application:
-    name: patients  # Change this for each service
+    name: catalogs  # Change this for each service
   datasource:
-    url: jdbc:postgresql://localhost:5432/labexams
-    username: postgres
-    password: admingres
+    url: jdbc:postgresql://${DB_HOSTNAME:localhost}:5432/${DB_NAME:labexams}
+    # url: jdbc:postgresql://localhost:5432/labexams
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:admingres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
