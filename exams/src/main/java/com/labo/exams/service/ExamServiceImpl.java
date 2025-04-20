@@ -56,7 +56,7 @@ public class ExamServiceImpl implements IExamService {
     private PruebasTo mapToPruebasTo(Test test) {
         PruebasTo pruebasTo = new PruebasTo();
         var catalog = this.catalogServiceClient.getCatalogById(test.getTestId()).block();
-
+        pruebasTo.setId(test.getId());
         pruebasTo.setNombrePrueba(catalog.getName());
         pruebasTo.setValor(null);
         return pruebasTo;
@@ -65,6 +65,15 @@ public class ExamServiceImpl implements IExamService {
     @Override
     public List<Exam> buscarTodos() {
         return this.examRepo.buscarTodos();
+    }
+
+    @Override
+    public void completarExamen(DatosTo datos) {
+    }
+
+    @Override
+    public void crearExamen(Exam e) {
+        this.examRepo.createExam(e);
     }
 
 }

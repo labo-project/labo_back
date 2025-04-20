@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.labo.exams.dto.DatosTo;
@@ -27,6 +29,12 @@ public class ExamsController {
     public ResponseEntity<List<Exam>> todos() {
         List<Exam> exams = this.examService.buscarTodos();
         return ResponseEntity.ok(exams);
+    }
+
+    @PostMapping
+    public ResponseEntity<Exam> crearExamen(@RequestBody Exam e){
+        this.examService.crearExamen(e);
+        return ResponseEntity.ok(e);
     }
 
     

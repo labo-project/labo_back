@@ -36,8 +36,8 @@ public class Exam {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
     private List<Test> tests;
 
     @PrePersist
