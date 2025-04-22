@@ -3,8 +3,6 @@ package com.labo.exams.repo.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,13 +27,12 @@ public class Exam {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-    
+
     @Column(nullable = false)
     private Boolean status;
 
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
-
 
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
     private List<Test> tests;
@@ -45,4 +42,3 @@ public class Exam {
         creationDate = LocalDateTime.now();
     }
 }
-

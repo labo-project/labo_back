@@ -40,5 +40,16 @@ public class ExamRepoImpl implements IExamRepo{
     public void createTest(Test t) {
         this.entityManager.persist(t);
     }
+
+    @Override
+    public void updateExam(Exam e) {
+        this.entityManager.merge(e);
+    }
+    
+    @Override
+    public Exam searchExamById(Long id) {
+        return this.entityManager.find(Exam.class, id);
+    }
+    
     
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.labo.exams.dto.DatosTo;
+import com.labo.exams.dto.ExamTo;
 import com.labo.exams.repo.model.Exam;
 import com.labo.exams.service.IExamService;
 
@@ -26,16 +27,26 @@ public class ExamsController {
     }
 
     @GetMapping("/todos")
-    public ResponseEntity<List<Exam>> todos() {
-        List<Exam> exams = this.examService.buscarTodos();
-        return ResponseEntity.ok(exams);
+    public ResponseEntity<List<ExamTo>> todos() {     
+        return ResponseEntity.ok(this.examService.buscarTodos());
     }
 
     @PostMapping
-    public ResponseEntity<Exam> crearExamen(@RequestBody Exam e){
+    public ResponseEntity<ExamTo> crearExamen(@RequestBody Exam e){
         this.examService.crearExamen(e);
-        return ResponseEntity.ok(e);
+        ExamTo respuesta = new ExamTo();
+        respuesta.setId(e.getId());
+        respuesta.setPatientId(e.getPatientId());
+        respuesta.setUserId(e.getUserId());
+        return ResponseEntity.ok(respuesta);
     }
+
+    @PostMapping("completar")
+    public ResponseEntity<DatosTo> completarPruebas(@RequestBody DatosTo datos) {
+        this.examService.completarExamen(datos);
+        return ResponseEntity.ok(datos);
+    }
+    
 
     
 }

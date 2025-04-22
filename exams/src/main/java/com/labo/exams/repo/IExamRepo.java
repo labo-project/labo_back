@@ -9,4 +9,7 @@ public interface IExamRepo {
     public List<Exam> buscarTodos();
     public void createExam(Exam e);
     public void createTest(Test t);
+    public void updateExam(Exam e);
+    public Exam searchExamById(Long id);
+    
 }
