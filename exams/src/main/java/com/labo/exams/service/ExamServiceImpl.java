@@ -1,6 +1,7 @@
 package com.labo.exams.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Service;
 import com.labo.exams.clients.CatalogClient;
 import com.labo.exams.clients.PatientClient;
 import com.labo.exams.dto.DatosTo;
+import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
 import com.labo.exams.dto.PatientTo;
+import com.labo.exams.dto.PruebasReportTo;
 import com.labo.exams.dto.PruebasTo;
 import com.labo.exams.repo.IExamRepo;
 import com.labo.exams.repo.model.Exam;
@@ -103,6 +106,32 @@ public class ExamServiceImpl implements IExamService {
     @Override
     public void crearExamen(Exam e) {
         this.examRepo.createExam(e);
+    }
+
+    @Override
+    public ExamReportTo buscarReportId(Long id) {
+        var e = this.examRepo.searchExamById(id);
+        var patient = this.patientServiceClient.getPatientById(e.getPatientId()).block();
+        ExamReportTo reporte = new ExamReportTo();
+        
+        List<PruebasReportTo> pruebasList = new ArrayList<PruebasReportTo>();
+        for (Test prueba : e.getTests()) {
+            PruebasReportTo p = new PruebasReportTo();
+            var catalog = this.catalogServiceClient.getCatalogById(prueba.getId()).block();
+            p.setId(prueba.getId());
+            p.setNombrePrueba(catalog.getName());
+            p.setReferencia(catalog.getReference());
+            p.setMinValue(catalog.getMinValue());
+            p.setMaxValue(catalog.getMaxValue());
+            p.setValor(prueba.getResult());
+
+            pruebasList.add(p);
+        }
+        reporte.setExamId(e.getId());
+        reporte.setPatientApellido(patient.getApellido());
+        reporte.setPruebas(pruebasList);
+
+        return reporte;
     }
 
 }

@@ -5,14 +5,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.labo.exams.dto.DatosTo;
+import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
 import com.labo.exams.repo.model.Exam;
 import com.labo.exams.service.IExamService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class ExamsController {
@@ -45,6 +49,12 @@ public class ExamsController {
     public ResponseEntity<DatosTo> completarPruebas(@RequestBody DatosTo datos) {
         this.examService.completarExamen(datos);
         return ResponseEntity.ok(datos);
+    }
+    
+    @GetMapping("report/{id}")
+    public ResponseEntity<ExamReportTo> getMethodName(@PathVariable Long id) {
+
+        return  ResponseEntity.ok(this.examService.buscarReportId(id));
     }
     
 

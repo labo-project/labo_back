@@ -5,9 +5,11 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class CatalogTo {
-    private String name;
+public class PruebasReportTo {
+    private Long id;
+    private String nombrePrueba;
+    private String referencia;
     private BigDecimal minValue;
     private BigDecimal maxValue;
-    private String reference;
+    private BigDecimal valor;
 }
