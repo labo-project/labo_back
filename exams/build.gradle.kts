@@ -17,11 +17,14 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // libreria para realizar los reportes en PDF
     implementation("com.itextpdf:itextpdf:5.5.13.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-
+    // Java Mapper
+    implementation("net.sf.dozer:dozer:5.5.1")
 
     implementation("io.projectreactor:reactor-core")
     
