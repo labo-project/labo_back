@@ -1,5 +1,7 @@
 package com.labo.catalog.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +19,17 @@ public class CatalogController {
     @GetMapping("/{id}")
     public ResponseEntity<CatalogTest> findById(@PathVariable Long id) {
         CatalogTest test = this.catalogService.findyById(id);
-        return test != null 
-            ? ResponseEntity.ok(test) 
-            : ResponseEntity.notFound().build();
+        return test != null
+                ? ResponseEntity.ok(test)
+                : ResponseEntity.notFound().build();
     }
+
+    @GetMapping
+    public ResponseEntity<List<CatalogTest>> findAll() {
+        var test = this.catalogService.findAll();
+        return test != null
+                ? ResponseEntity.ok(test)
+                : ResponseEntity.notFound().build();
+    }
+
 }

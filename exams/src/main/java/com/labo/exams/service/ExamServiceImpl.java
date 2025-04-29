@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +110,7 @@ public class ExamServiceImpl implements IExamService {
 
     @Override
     public ExamReportTo buscarReportId(Long id) {
-        Mapper mapper = new DozerBeanMapper();
+
         var e = this.examRepo.searchExamById(id);
         var patient = this.patientServiceClient.getPatientById(e.getPatientId()).block();
         ExamReportTo reporte = new ExamReportTo();

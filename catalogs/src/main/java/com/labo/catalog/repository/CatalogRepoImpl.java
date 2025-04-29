@@ -1,5 +1,7 @@
 package com.labo.catalog.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.labo.catalog.repository.model.CatalogTest;
@@ -32,6 +34,22 @@ public class CatalogRepoImpl implements ICatalogRepo {
     } catch (NoResultException e) {
         return null;
     }
+    }
+
+    @Override
+    public List<CatalogTest> findAll() {
+        TypedQuery<CatalogTest> query = this.entityManager.createQuery(
+            "SELECT ct FROM CatalogTest ct " +
+            "LEFT JOIN FETCH ct.area " ,
+            CatalogTest.class
+        );
+        
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+        
     }
 
 }
