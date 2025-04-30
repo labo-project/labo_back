@@ -26,7 +26,6 @@ public class CatalogArea {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatalogTest> tests;
 }

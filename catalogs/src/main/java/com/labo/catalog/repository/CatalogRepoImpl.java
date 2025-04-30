@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.labo.catalog.repository.model.CatalogArea;
 import com.labo.catalog.repository.model.CatalogTest;
 
 import jakarta.persistence.EntityManager;
@@ -20,7 +21,7 @@ public class CatalogRepoImpl implements ICatalogRepo {
     private EntityManager entityManager;
 
     @Override
-    public CatalogTest findyById(Long id) {
+    public CatalogTest findyByIdTest(Long id) {
         TypedQuery<CatalogTest> query = this.entityManager.createQuery(
         "SELECT ct FROM CatalogTest ct " +
         "LEFT JOIN FETCH ct.area " +
@@ -37,7 +38,7 @@ public class CatalogRepoImpl implements ICatalogRepo {
     }
 
     @Override
-    public List<CatalogTest> findAll() {
+    public List<CatalogTest> findAllTest() {
         TypedQuery<CatalogTest> query = this.entityManager.createQuery(
             "SELECT ct FROM CatalogTest ct " +
             "LEFT JOIN FETCH ct.area " ,
@@ -51,5 +52,40 @@ public class CatalogRepoImpl implements ICatalogRepo {
         }
         
     }
+
+    
+    @Override
+    public CatalogArea findyById(Long id) {
+        TypedQuery<CatalogArea> query = this.entityManager.createQuery(
+        "SELECT ct FROM CatalogArea ct " +
+        "WHERE ct.id = :id", 
+        CatalogArea.class
+    );
+    query.setParameter("id", id);
+    
+    try {
+        return query.getSingleResult();
+    } catch (NoResultException e) {
+        return null;
+    }
+    }
+
+    @Override
+    public List<CatalogArea> findAll() {
+        TypedQuery<CatalogArea> query = this.entityManager.createQuery(
+            "SELECT ct FROM CatalogArea ct ",
+            CatalogArea.class
+        );
+        
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+        
+    }
+
+   
+
 
 }

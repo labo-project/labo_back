@@ -1,14 +1,17 @@
 package com.labo.catalog.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.labo.catalog.repository.model.CatalogTest;
+import com.labo.catalog.dto.CatalogAreaTo;
+import com.labo.catalog.repository.model.CatalogArea;
 import com.labo.catalog.service.ICatalogService;
 
 @RestController
@@ -16,19 +19,27 @@ public class CatalogController {
     @Autowired
     private ICatalogService catalogService;
 
+    @Autowired
+    private Mapper mapper;
+
     @GetMapping("/{id}")
-    public ResponseEntity<CatalogTest> findById(@PathVariable Long id) {
-        CatalogTest test = this.catalogService.findyById(id);
+    public ResponseEntity<CatalogAreaTo> findById(@PathVariable Long id) {
+        var test = this.catalogService.findyById(id);
+        System.out.println("something");
         return test != null
-                ? ResponseEntity.ok(test)
+                ? ResponseEntity.ok(mapper.map(test, CatalogAreaTo.class))
                 : ResponseEntity.notFound().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CatalogTest>> findAll() {
+    public ResponseEntity<List<CatalogAreaTo>> findAll() {
         var test = this.catalogService.findAll();
+
         return test != null
-                ? ResponseEntity.ok(test)
+                ? ResponseEntity
+                        .ok(test.stream().map(e -> mapper
+                                .map(e, CatalogAreaTo.class))
+                                .collect(Collectors.toList()))
                 : ResponseEntity.notFound().build();
     }
 

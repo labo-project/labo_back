@@ -2,9 +2,9 @@ package com.labo.catalog.service;
 
 import java.util.List;
 
-import com.labo.catalog.repository.model.CatalogTest;
+import com.labo.catalog.repository.model.CatalogArea;
 
 public interface ICatalogService {
-    public CatalogTest findyById(Long id);
-    public List<CatalogTest> findAll();
+    public CatalogArea findyById(Long id);
+    public List<CatalogArea> findAll();
 }
