@@ -1,6 +1,7 @@
 package com.labo.exams.clients;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,11 +12,10 @@ import java.util.List;
 
 @Component
 public class PatientClient {
-    private final WebClient patientServiceClient;
+    
+    @Autowired
+    private WebClient patientServiceClient;
 
-    public PatientClient(WebClient patientServiceClient) {
-        this.patientServiceClient = patientServiceClient;
-    }
 
     public Mono<PatientTo> getPatientById(Long id) {
         return patientServiceClient.get()

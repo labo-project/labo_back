@@ -16,7 +16,7 @@ public class PatientController {
     private IPatientService patientService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> findById(@PathVariable Long id) {
+    public ResponseEntity<Patient> findById(@PathVariable("id") Long id) {
         Patient patient = patientService.findById(id);
         return patient != null 
             ? ResponseEntity.ok(patient) 

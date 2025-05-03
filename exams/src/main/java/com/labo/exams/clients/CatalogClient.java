@@ -2,6 +2,7 @@ package com.labo.exams.clients;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,11 +13,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class CatalogClient {
     
-    private final WebClient catalogServiceClient;
-
-    public CatalogClient(WebClient catalogServiceClient) {
-        this.catalogServiceClient = catalogServiceClient;
-    }
+    @Autowired
+    private WebClient catalogServiceClient;
 
     public Mono<CatalogTo> getCatalogById(Long id) {
         return catalogServiceClient.get()

@@ -57,13 +57,13 @@ public class ExamsController {
     }
 
     @GetMapping("report/{id}")
-    public ResponseEntity<ExamReportTo> getMethodName(@PathVariable Long id) {
+    public ResponseEntity<ExamReportTo> getMethodName(@PathVariable("id") Long id) {
 
         return ResponseEntity.ok(this.examService.buscarReportId(id));
     }
 
     @PostMapping("generateReport/{id}")
-    public ResponseEntity<byte[]> generatePdf(@PathVariable Long id) {
+    public ResponseEntity<byte[]> generatePdf(@PathVariable("id") Long id) {
         byte[] pdfBytes = this.reportService.generateLabReport(this.examService.buscarReportId(id));
 
         HttpHeaders headers = new HttpHeaders();

@@ -6,5 +6,5 @@ build
 
 /list
 /.vscode
-
+bin/
 .env

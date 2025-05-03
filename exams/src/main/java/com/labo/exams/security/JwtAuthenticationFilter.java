@@ -43,8 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 setSecurityContext(claims, token); // Modified to include token
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            log.error("Authentication error: ", e);
+        } catch (JwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

@@ -24,8 +24,7 @@ public class CatalogRepoImpl implements ICatalogRepo {
     public CatalogTest findyByIdTest(Long id) {
         TypedQuery<CatalogTest> query = this.entityManager.createQuery(
         "SELECT ct FROM CatalogTest ct " +
-        "LEFT JOIN FETCH ct.area " +
-        "WHERE ct.id = :id", 
+        "LEFT JOIN FETCH ct.area " ,
         CatalogTest.class
     );
     query.setParameter("id", id);
