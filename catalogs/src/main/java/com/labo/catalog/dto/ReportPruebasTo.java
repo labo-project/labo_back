@@ -1,11 +1,11 @@
-package com.labo.exams.dto;
+package com.labo.catalog.dto;
 
 import java.math.BigDecimal;
 
 import lombok.Data;
 
 @Data
-public class CatalogTo {
+public class ReportPruebasTo {
     private Long idPrueba;
     private String testName;
     private BigDecimal minValue;

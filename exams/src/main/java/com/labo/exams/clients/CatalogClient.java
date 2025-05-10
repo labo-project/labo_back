@@ -18,7 +18,7 @@ public class CatalogClient {
 
     public Mono<CatalogTo> getCatalogById(Long id) {
         return catalogServiceClient.get()
-                .uri("/{id}", id)
+                .uri("/test/{id}", id)
                 .retrieve()
                 .bodyToMono(CatalogTo.class);
     }

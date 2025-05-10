@@ -22,69 +22,50 @@ public class CatalogRepoImpl implements ICatalogRepo {
 
     @Override
     public CatalogTest findyByIdTest(Long id) {
-        TypedQuery<CatalogTest> query = this.entityManager.createQuery(
-        "SELECT ct FROM CatalogTest ct " +
-        "LEFT JOIN FETCH ct.area " ,
-        CatalogTest.class
-    );
-    query.setParameter("id", id);
-    
-    try {
-        return query.getSingleResult();
-    } catch (NoResultException e) {
-        return null;
-    }
+        try {
+            return this.entityManager.find(CatalogTest.class, id);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
     public List<CatalogTest> findAllTest() {
         TypedQuery<CatalogTest> query = this.entityManager.createQuery(
-            "SELECT ct FROM CatalogTest ct " +
-            "LEFT JOIN FETCH ct.area " ,
-            CatalogTest.class
-        );
-        
+                "SELECT ct FROM CatalogTest ct " +
+                        "LEFT JOIN FETCH ct.area ",
+                CatalogTest.class);
+
         try {
             return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }
-        
+
     }
 
-    
     @Override
     public CatalogArea findyById(Long id) {
-        TypedQuery<CatalogArea> query = this.entityManager.createQuery(
-        "SELECT ct FROM CatalogArea ct " +
-        "WHERE ct.id = :id", 
-        CatalogArea.class
-    );
-    query.setParameter("id", id);
-    
-    try {
-        return query.getSingleResult();
-    } catch (NoResultException e) {
-        return null;
-    }
+
+        try {
+            return this.entityManager.find(CatalogArea.class, id);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
     public List<CatalogArea> findAll() {
         TypedQuery<CatalogArea> query = this.entityManager.createQuery(
-            "SELECT ct FROM CatalogArea ct ",
-            CatalogArea.class
-        );
-        
+                "SELECT ct FROM CatalogArea ct ",
+                CatalogArea.class);
+
         try {
             return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }
-        
+
     }
-
-   
-
 
 }

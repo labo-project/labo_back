@@ -62,7 +62,7 @@ public class ExamServiceImpl implements IExamService {
         PruebasTo pruebasTo = new PruebasTo();
         var catalog = this.catalogServiceClient.getCatalogById(test.getTestId()).block();
         pruebasTo.setId(test.getTestId());
-        pruebasTo.setNombrePrueba(catalog.getName());
+        pruebasTo.setNombrePrueba(catalog.getTestName());
         pruebasTo.setValor(null);
         return pruebasTo;
     }
@@ -120,7 +120,7 @@ public class ExamServiceImpl implements IExamService {
             PruebasReportTo p = new PruebasReportTo();
             var catalog = this.catalogServiceClient.getCatalogById(prueba.getId()).block();
             p.setId(prueba.getId());
-            p.setNombrePrueba(catalog.getName());
+            p.setNombrePrueba(catalog.getTestName());
             p.setReferencia(catalog.getReference());
             p.setMinValue(catalog.getMinValue());
             p.setMaxValue(catalog.getMaxValue());
