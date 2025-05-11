@@ -6,7 +6,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.labo.catalog.dto.CatalogTestTo;
 import com.labo.catalog.dto.ReportPruebasTo;
 import com.labo.catalog.repository.ICatalogRepo;
 import com.labo.catalog.repository.model.CatalogArea;

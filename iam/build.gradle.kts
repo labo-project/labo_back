@@ -1,8 +1,8 @@
 // Root project build.gradle.kts
 plugins {
     id("buildlogic.java-application-conventions")
-    id("org.springframework.boot") version "3.2.3" 
-    id("io.spring.dependency-management") version "1.1.6" 
+    id("org.springframework.boot") version "3.4.5" 
+    id("io.spring.dependency-management") version "1.1.7" 
     kotlin("jvm") version "2.0.21" 
     kotlin("plugin.spring") version "2.0.21" 
     kotlin("plugin.jpa") version "2.0.21" 
@@ -19,7 +19,7 @@ dependencies {
     // implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
     // implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
-    implementation("org.springframework.boot:spring-boot-starter:3.2.3")
+    implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -34,7 +34,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok")
     
     runtimeOnly("org.postgresql:postgresql")
-    implementation("org.springframework.boot:spring-boot-starter-security:3.2.3")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 

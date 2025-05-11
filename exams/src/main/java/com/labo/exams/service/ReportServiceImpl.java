@@ -27,7 +27,7 @@ public class ReportServiceImpl implements IReportService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, baos);
+            PdfWriter.getInstance(document, baos);
             document.open();
 
             // Add title

@@ -1,8 +1,8 @@
 // Root project build.gradle.kts
 plugins {
     id("buildlogic.java-application-conventions")
-    id("org.springframework.boot") version "3.2.3" 
-    id("io.spring.dependency-management") version "1.1.6" 
+    id("org.springframework.boot") version "3.4.5" 
+    id("io.spring.dependency-management") version "1.1.7" 
     kotlin("jvm") version "2.0.21" 
     kotlin("plugin.spring") version "2.0.21" 
     kotlin("plugin.jpa") version "2.0.21" 
@@ -25,7 +25,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok")
     
     runtimeOnly("org.postgresql:postgresql")
-    implementation("org.springframework.boot:spring-boot-starter-security:3.2.3")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Java Mapper
     implementation("net.sf.dozer:dozer:5.5.1")
