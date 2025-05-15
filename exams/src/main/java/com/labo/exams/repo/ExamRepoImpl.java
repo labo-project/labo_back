@@ -50,6 +50,15 @@ public class ExamRepoImpl implements IExamRepo{
     public Exam searchExamById(Long id) {
         return this.entityManager.find(Exam.class, id);
     }
+
+    @Override
+    public List<Exam> buscarEstados(Boolean estado) {
+        TypedQuery<Exam> myQuery = this.entityManager
+            .createQuery("SELECT e FROM Exam e WHERE e.status = :estado", Exam.class)
+            .setParameter("estado", estado);
+        
+        return myQuery.getResultList();
+    }
     
     
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.labo.exams.clients.CatalogClient;
 import com.labo.exams.clients.PatientClient;
+import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.DatosTo;
 import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
@@ -34,37 +36,53 @@ public class ExamServiceImpl implements IExamService {
     private CatalogClient catalogServiceClient;
 
     @Override
-    public List<DatosTo> showPendingExams() {
-        List<Exam> exams = this.examRepo.buscarTodos();
+    public List<DatosTo> showPendingExams(Long areaId) {
+        List<Exam> exams = this.examRepo.buscarEstados(false);
         return exams.stream()
                 .filter(exam -> exam.getTests() != null && !exam.getTests().isEmpty())
-                .map(this::mapToDataTo)
+                .map(exam -> mapToDataTo(exam, areaId))
+                .filter(datosTo -> datosTo != null && datosTo.getPruebas() != null && !datosTo.getPruebas().isEmpty())
                 .collect(Collectors.toList());
     }
 
-    private DatosTo mapToDataTo(Exam exam) {
-
+    private DatosTo mapToDataTo(Exam exam, Long areaId) {
         DatosTo datosTo = new DatosTo();
         datosTo.setIdExamen(exam.getId());
-
         Mono<PatientTo> patientMono = patientServiceClient.getPatientById(exam.getPatientId());
         PatientTo patient = patientMono.block();
         datosTo.setApellido(patient.getApellido());
-
         datosTo.setEstado(exam.getStatus());
-        datosTo.setPruebas(exam.getTests().stream()
-                .map(this::mapToPruebasTo)
-                .collect(Collectors.toList()));
+
+        // Map and filter tests in one step, removing any nulls
+        List<PruebasTo> pruebas = exam.getTests().stream()
+                .map(test -> mapToPruebasTo(test, areaId))
+                .filter(Objects::nonNull) // This removes any null entries
+                .collect(Collectors.toList());
+
+        datosTo.setPruebas(pruebas);
+
+        // If after filtering there are no tests left, return null so this exam can be
+        // filtered out
+        if (pruebas.isEmpty()) {
+            return null;
+        }
+
         return datosTo;
     }
 
-    private PruebasTo mapToPruebasTo(Test test) {
+    private PruebasTo mapToPruebasTo(Test test, Long areaId) {
         PruebasTo pruebasTo = new PruebasTo();
         var catalog = this.catalogServiceClient.getCatalogById(test.getTestId()).block();
-        pruebasTo.setId(test.getTestId());
-        pruebasTo.setNombrePrueba(catalog.getTestName());
-        pruebasTo.setValor(null);
-        return pruebasTo;
+
+        if (catalog.getIdArea() != areaId) {
+            // Test doesn't belong to the specified area, so we exclude it
+            return null;
+        } else {
+            pruebasTo.setId(test.getTestId());
+            pruebasTo.setNombrePrueba(catalog.getTestName());
+            pruebasTo.setValor(null);
+            return pruebasTo;
+        }
     }
 
     @Override
@@ -84,11 +102,11 @@ public class ExamServiceImpl implements IExamService {
     public void completarExamen(DatosTo datos) {
         // Step 1: Map testId -> PruebasTo for fast access
         Map<Long, PruebasTo> pruebaMap = datos.getPruebas().stream()
-            .collect(Collectors.toMap(PruebasTo::getId, p -> p));
-    
+                .collect(Collectors.toMap(PruebasTo::getId, p -> p));
+
         // Step 2: Fetch the exam
         Exam e = this.examRepo.searchExamById(datos.getIdExamen());
-    
+
         // Step 3: Update tests with matching data
         for (Test test : e.getTests()) {
             PruebasTo pruebaDato = pruebaMap.get(test.getId());
@@ -97,11 +115,10 @@ public class ExamServiceImpl implements IExamService {
                 test.setCompletionDate(LocalDateTime.now());
             }
         }
-    
+
         // Step 4: Update status and save
         this.examRepo.updateExam(e);
     }
-    
 
     @Override
     public void crearExamen(Exam e) {
@@ -114,7 +131,7 @@ public class ExamServiceImpl implements IExamService {
         var e = this.examRepo.searchExamById(id);
         var patient = this.patientServiceClient.getPatientById(e.getPatientId()).block();
         ExamReportTo reporte = new ExamReportTo();
-        
+
         List<PruebasReportTo> pruebasList = new ArrayList<PruebasReportTo>();
         for (Test prueba : e.getTests()) {
             PruebasReportTo p = new PruebasReportTo();
@@ -134,6 +151,12 @@ public class ExamServiceImpl implements IExamService {
         reporte.setPruebas(pruebasList);
 
         return reporte;
+    }
+
+    @Override
+    public List<AreaTo> buscarAreasPendientes() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'buscarAreasPendientes'");
     }
 
 }

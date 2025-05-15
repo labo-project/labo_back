@@ -11,5 +11,6 @@ public interface IExamRepo {
     public void createTest(Test t);
     public void updateExam(Exam e);
     public Exam searchExamById(Long id);
+    public List<Exam> buscarEstados(Boolean estado);
     
 }
