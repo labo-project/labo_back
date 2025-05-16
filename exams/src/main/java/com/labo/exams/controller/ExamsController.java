@@ -29,13 +29,13 @@ public class ExamsController {
     @Autowired
     private  IReportService reportService;
 
-    @GetMapping
-    public ResponseEntity<List<DatosTo>> getAllExams() {
-        List<DatosTo> exams = this.examService.showPendingExams();
+    @GetMapping("{areaId}")
+    public ResponseEntity<List<DatosTo>> getAllExams(@PathVariable("areaId") Long areaId) {
+        List<DatosTo> exams = this.examService.showPendingExams(areaId);
         return ResponseEntity.ok(exams);
     }
 
-    @GetMapping("/todos")
+    @GetMapping
     public ResponseEntity<List<ExamTo>> todos() {
         return ResponseEntity.ok(this.examService.buscarTodos());
     }
