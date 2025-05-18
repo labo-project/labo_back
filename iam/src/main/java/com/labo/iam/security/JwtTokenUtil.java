@@ -36,7 +36,7 @@ public class JwtTokenUtil {
         return JWT.create()
                 .withSubject(userDetails.getUsername())
                 .withClaim("roles", roles) // Add roles to claims
-                .withExpiresAt(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
+                .withExpiresAt(new Date(System.currentTimeMillis() + expiration * 1000)) // 1 hour
                 .sign(Algorithm.HMAC256(secret));
     }
 
