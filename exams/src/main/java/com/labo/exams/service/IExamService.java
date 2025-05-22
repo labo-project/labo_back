@@ -2,7 +2,6 @@ package com.labo.exams.service;
 
 import java.util.List;
 
-import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.DatosTo;
 import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
@@ -14,5 +13,4 @@ public interface IExamService {
     public void completarExamen(DatosTo datos);
     public void crearExamen(Exam e);
     public ExamReportTo buscarReportId(Long id);
-    public List<AreaTo> buscarAreasPendientes();
 }

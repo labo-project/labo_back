@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.labo.catalog.dto.CatalogAreaTo;
+import com.labo.catalog.dto.CatalogTestTo;
 import com.labo.catalog.dto.ReportPruebasTo;
 import com.labo.catalog.service.ICatalogService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 public class CatalogController {
@@ -51,5 +55,12 @@ public class CatalogController {
                 : ResponseEntity.notFound().build();
     }
 
+    @PostMapping("path")
+    public ResponseEntity<CatalogTestTo> postMethodName(@RequestBody CatalogTestTo entity) {
+        
+        
+        return ResponseEntity.ok(entity);
+    }
+    
 
 }

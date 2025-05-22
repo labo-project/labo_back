@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.labo.exams.clients.CatalogClient;
 import com.labo.exams.clients.PatientClient;
-import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.DatosTo;
 import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
@@ -77,12 +76,14 @@ public class ExamServiceImpl implements IExamService {
         if (catalog.getIdArea() != areaId) {
             // Test doesn't belong to the specified area, so we exclude it
             return null;
+        } else if (test.getResult() != null) {
+            return null;
         } else {
-            pruebasTo.setId(test.getTestId());
+            pruebasTo.setId(test.getId());
             pruebasTo.setNombrePrueba(catalog.getTestName());
-            pruebasTo.setValor(null);
             return pruebasTo;
         }
+
     }
 
     @Override
@@ -151,12 +152,6 @@ public class ExamServiceImpl implements IExamService {
         reporte.setPruebas(pruebasList);
 
         return reporte;
-    }
-
-    @Override
-    public List<AreaTo> buscarAreasPendientes() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarAreasPendientes'");
     }
 
 }
