@@ -7,10 +7,11 @@ services:
       - .env
     environment:
       - JWT_SECRET=${JWT_SECRET}
+      - CATALOGS_URL=http://catalogs:8083
     networks:
       - microservices-network
     depends_on:
-      - db
+      - catalogs
 
   catalogs:
     build: ./catalogs

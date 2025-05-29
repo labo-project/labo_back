@@ -32,7 +32,7 @@ spring:
           filters:
             - StripPrefix=1
         - id: catalogs
-          uri: http://localhost:8083
+          uri: ${CATALOGS_URL}
           predicates:
             - Path=/catalogs/**
           filters:
