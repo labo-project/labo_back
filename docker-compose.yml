@@ -7,16 +7,15 @@ services:
       - .env
     environment:
       - JWT_SECRET=${JWT_SECRET}
-      - CATALOGS_URL=http://catalogs:8083
+      - CATALOGS_URL=http://catalogs
+      - IAM_URL=http://iam
+      - PATIENTS_URL=http://patients
+      - EXAMS_URL=http://exams
     networks:
       - microservices-network
-    depends_on:
-      - catalogs
 
   catalogs:
     build: ./catalogs
-    ports:
-      - "8083:8083"
     env_file:
       - .env
     environment:
@@ -25,6 +24,57 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - SERVER_PORT=80
+    networks:
+      - microservices-network
+    depends_on:
+      - db
+
+  exams:
+    build: ./exams
+    env_file:
+      - .env
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_HOSTNAME=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SERVER_PORT=80
+      - API_GATEWAY_URL=http://api-gateway:8080
+    networks:
+      - microservices-network
+    depends_on:
+      - db
+      - api-gateway
+
+  iam:
+    build: ./iam
+    env_file:
+      - .env
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_HOSTNAME=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SERVER_PORT=80
+    networks:
+      - microservices-network
+    depends_on:
+      - db
+
+  patients:
+    build: ./patients
+    env_file:
+      - .env
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_HOSTNAME=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - SERVER_PORT=80
     networks:
       - microservices-network
     depends_on:

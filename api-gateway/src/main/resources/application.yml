@@ -20,13 +20,13 @@ spring:
             allowCredentials: true
       routes:
         - id: exams
-          uri: http://localhost:8081
+          uri: ${EXAMS_URL}
           predicates:
             - Path=/exams/**
           filters:
             - StripPrefix=1
         - id: patients
-          uri: http://localhost:8082
+          uri: ${PATIENTS_URL}
           predicates:
             - Path=/patients/**
           filters:
@@ -38,7 +38,7 @@ spring:
           filters:
             - StripPrefix=1
         - id: iam
-          uri: http://localhost:8090
+          uri: ${IAM_URL}
           predicates:
             - Path=/iam/**
           filters:
