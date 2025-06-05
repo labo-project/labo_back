@@ -16,8 +16,8 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.ExamReportTo;
-import com.labo.exams.dto.PruebasReportTo;
 
 @Service
 public class ReportServiceImpl implements IReportService {
@@ -49,62 +49,74 @@ public class ReportServiceImpl implements IReportService {
             float[] columnWidths = { 3f, 1f, 2f, 1f };
             table.setWidths(columnWidths);
 
-            // Add table headers
             table.addCell(createHeaderCell("Nombre"));
             table.addCell(createHeaderCell("Valor"));
             table.addCell(createHeaderCell("Valores Referenciales"));
             table.addCell(createHeaderCell("Referencia"));
 
-            for (PruebasReportTo test : reportData.getPruebas()) {
-                table.addCell(createCell(test.getNombrePrueba()));
+            for (AreaTo area : reportData.getAreas()) {
+                // Create area header cell that spans all 4 columns
+                PdfPCell areaHeaderCell = createHeaderCell(area.getName());
+                areaHeaderCell.setColspan(4); // Span across all 4 columns
+                areaHeaderCell.setBackgroundColor(BaseColor.LIGHT_GRAY); // Different color to distinguish from column
+                                                                         // headers
+                areaHeaderCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                table.addCell(areaHeaderCell);
 
-                // Format the value and check if it's outside reference range
-                double value = ((Number) test.getValor()).doubleValue();
-                double min = ((Number) test.getMinValue()).doubleValue();
-                double max = ((Number) test.getMaxValue()).doubleValue();
+                // Add tests for this area
+                for (var test : area.getTests()) {
+                    // Test name
+                    table.addCell(createCell(test.getName()));
 
-                PdfPCell valueCell = createCell(String.format("%.2f", value));
+                    // Format the value and check if it's outside reference range
+                    double value = ((Number) test.getValor()).doubleValue();
+                    double min = ((Number) test.getMinValue()).doubleValue();
+                    double max = ((Number) test.getMaxValue()).doubleValue();
 
-                // Highlight abnormal values
-                if (value < min || value > max) {
-                    valueCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    PdfPCell valueCell = createCell(String.format("%.2f", value));
+                    // Highlight abnormal values
+                    if (value < min || value > max) {
+                        valueCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    }
+                    table.addCell(valueCell);
+
+                    // Combined min-max cell
+                    String refValues = String.format("%.2f - %.2f", min, max);
+                    table.addCell(createCell(refValues));
+
+                    // Reference unit
+                    table.addCell(createCell(test.getReference()));
                 }
-
-                table.addCell(valueCell);
-
-                // Combined min-max cell
-                String refValues = String.format("%.2f - %.2f", min, max);
-                table.addCell(createCell(refValues));
-
-                table.addCell(createCell(test.getReferencia()));
             }
 
             document.add(table);
-
-            // Add interpretation section
-            document.add(Chunk.NEWLINE);
-            document.add(new Paragraph("Interpretation:", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            // // Add interpretation section
+            // document.add(Chunk.NEWLINE);
+            // document.add(new Paragraph("Interpretation:", new
+            // Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
 
             // Check if any test is outside reference range
-            boolean hasAbnormalValues = false;
-            for (PruebasReportTo test : reportData.getPruebas()) {
-                double value = ((Number) test.getValor()).doubleValue();
-                double min = ((Number) test.getMinValue()).doubleValue();
-                double max = ((Number) test.getMaxValue()).doubleValue();
 
-                if (value < min || value > max) {
-                    hasAbnormalValues = true;
-                    String interpretation = test.getNombrePrueba() + " is " +
-                            (value < min ? "below" : "above") +
-                            " the reference range.";
-                    document.add(new Paragraph("• " + interpretation, new Font(Font.FontFamily.HELVETICA, 12)));
-                }
-            }
+            // boolean hasAbnormalValues = false;
+            // for (PruebasReportTo test : reportData.getPruebas()) {
+            // double value = ((Number) test.getValor()).doubleValue();
+            // double min = ((Number) test.getMinValue()).doubleValue();
+            // double max = ((Number) test.getMaxValue()).doubleValue();
 
-            if (!hasAbnormalValues) {
-                document.add(new Paragraph("All values are within normal reference ranges.",
-                        new Font(Font.FontFamily.HELVETICA, 12)));
-            }
+            // if (value < min || value > max) {
+            // hasAbnormalValues = true;
+            // String interpretation = test.getNombrePrueba() + " is " +
+            // (value < min ? "below" : "above") +
+            // " the reference range.";
+            // document.add(new Paragraph("• " + interpretation, new
+            // Font(Font.FontFamily.HELVETICA, 12)));
+            // }
+            // }
+
+            // if (!hasAbnormalValues) {
+            // document.add(new Paragraph("All values are within normal reference ranges.",
+            // new Font(Font.FontFamily.HELVETICA, 12)));
+            // }
 
             // Add report footer
             document.add(Chunk.NEWLINE);
@@ -141,9 +153,11 @@ public class ReportServiceImpl implements IReportService {
 
         // You can add more patient information fields as needed
         addInfoRow(patientInfoTable, "Patient ID:",
-                reportData.getPatient().getId() != null ? reportData.getPatient().getId().toString() : "N/A", boldFont, normalFont);
+                reportData.getPatient().getId() != null ? reportData.getPatient().getId().toString() : "N/A", boldFont,
+                normalFont);
         addInfoRow(patientInfoTable, "Edad:",
-                reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad() .toString() : "N/A", boldFont,
+                reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad().toString() : "N/A",
+                boldFont,
                 normalFont);
         addInfoRow(patientInfoTable, "Collection Date:",
                 reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toString() : "N/A", boldFont,

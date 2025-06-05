@@ -138,7 +138,7 @@ public class ExamServiceImpl implements IExamService {
         List<PruebasReportTo> pruebasList = new ArrayList<PruebasReportTo>();
         for (Test prueba : e.getTests()) {
             PruebasReportTo p = new PruebasReportTo();
-            var catalog = this.catalogServiceClient.getCatalogById(prueba.getId()).block();
+            var catalog = this.catalogServiceClient.getCatalogById(prueba.getTestId()).block();
             p.setId(prueba.getId());
             p.setNombrePrueba(catalog.getTestName());
             p.setReferencia(catalog.getReference());
