@@ -12,12 +12,14 @@ import org.springframework.stereotype.Service;
 
 import com.labo.exams.clients.CatalogClient;
 import com.labo.exams.clients.PatientClient;
+import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.DatosTo;
 import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.dto.ExamTo;
 import com.labo.exams.dto.PatientTo;
 import com.labo.exams.dto.PruebasReportTo;
 import com.labo.exams.dto.PruebasTo;
+import com.labo.exams.dto.TestCatalogTo;
 import com.labo.exams.repo.IExamRepo;
 import com.labo.exams.repo.model.Exam;
 import com.labo.exams.repo.model.Test;
@@ -143,15 +145,46 @@ public class ExamServiceImpl implements IExamService {
             p.setMinValue(catalog.getMinValue());
             p.setMaxValue(catalog.getMaxValue());
             p.setValor(prueba.getResult());
-
+            p.setAreaName(catalog.getAreaName());
+            p.setIdArea(catalog.getIdArea());
             pruebasList.add(p);
         }
+
         reporte.setExamId(e.getId());
         reporte.setPatient(patient);
         reporte.setFechaRealizada(e.getCreationDate());
-        reporte.setPruebas(pruebasList);
+        reporte.setAreas(transformar(pruebasList));
 
         return reporte;
     }
 
+    private List<AreaTo> transformar(List<PruebasReportTo> pruebas) {
+
+        Map<Long, List<PruebasReportTo>> groupedByArea = pruebas.stream()
+                .collect(Collectors.groupingBy(PruebasReportTo::getIdArea));
+
+        // Then transform to the target structure
+        return groupedByArea.entrySet().stream()
+                .map(entry -> {
+                    // Get the first item to extract area name (assuming all items in group have
+                    // same area name)
+                    String areaName = entry.getValue().get(0).getAreaName();
+
+                    // Convert each PruebasReportTo to TestCatalogTo
+                    List<TestCatalogTo> tests = entry.getValue().stream()
+                            .map(prueba -> new TestCatalogTo(
+                                    prueba.getNombrePrueba(),
+                                    prueba.getMinValue(),
+                                    prueba.getMaxValue(),
+                                    prueba.getReferencia(),
+                                    prueba.getValor()))
+                            .collect(Collectors.toList());
+
+                    return new AreaTo(
+                            areaName,
+                            tests
+                        );
+                })
+                .collect(Collectors.toList());
+    }
 }

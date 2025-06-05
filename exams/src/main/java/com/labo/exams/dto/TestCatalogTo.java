@@ -2,16 +2,15 @@ package com.labo.exams.dto;
 
 import java.math.BigDecimal;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class PruebasReportTo {
-    private Long id;
-    private String nombrePrueba;
-    private String referencia;
+@AllArgsConstructor
+public class TestCatalogTo {
+    private String name;
     private BigDecimal minValue;
     private BigDecimal maxValue;
+    private String reference;
     private BigDecimal valor;
-    private Long idArea;
-    private String areaName;
 }

@@ -43,7 +43,7 @@ logging:
               BasicBinder: TRACE
 api:
   gateway:
-    url: http://localhost:9082
+    url: ${API_GATEWAY_URL:http://localhost:8080}
 # Actuator endpoints for monitoring
 # management:
 #   endpoints:

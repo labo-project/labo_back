@@ -11,6 +11,6 @@ public class ExamReportTo {
     private Long examId;
     private PatientTo patient;
     private LocalDateTime fechaRealizada;
-    private List<PruebasReportTo> pruebas;
+    private List<AreaTo> areas;
 
 }
