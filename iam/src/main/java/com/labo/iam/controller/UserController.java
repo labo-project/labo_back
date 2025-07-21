@@ -14,7 +14,7 @@ import com.labo.iam.service.IUserService;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     
     @Autowired
