@@ -69,14 +69,22 @@ public class CatalogRepoImpl implements ICatalogRepo {
     }
 
     @Override
-    public void insertTest(CatalogTest test) {
-        this.entityManager.persist(test);
+    public void insertArea(CatalogArea area) {
+        this.entityManager.persist(area);
     }
 
     @Override
-    public void updateTest(CatalogTest test) {
-        this.entityManager.merge(test);
+    public void updateArea(CatalogArea area) {
+        this.entityManager.merge(area);
+        
     }
+
+    @Override
+    public void deleteArea(Long id) {
+        this.entityManager.remove(this.findyById(id));
+    }
+
+ 
 
     
 

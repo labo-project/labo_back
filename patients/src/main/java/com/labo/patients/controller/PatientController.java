@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
-
 @RestController
 public class PatientController {
 
@@ -43,10 +40,9 @@ public class PatientController {
     }
     
     @PutMapping
-    public String putMethodName(@RequestBody String entity) {
-        //TODO: process PUT request
-        
-        return entity;
+    public ResponseEntity<Patient> actualizar(@RequestBody Patient patient) {
+        this.patientService.update(patient);
+        return ResponseEntity.ok(patient);
     }
     
 }

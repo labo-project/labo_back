@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,8 @@ import com.labo.catalog.dto.ReportPruebasTo;
 import com.labo.catalog.service.ICatalogService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -55,12 +58,26 @@ public class CatalogController {
                 : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("path")
-    public ResponseEntity<CatalogTestTo> postMethodName(@RequestBody CatalogTestTo entity) {
+    @PostMapping
+    public ResponseEntity<CatalogAreaTo> insertarArea(@RequestBody CatalogAreaTo entity) {
         
-        
+        this.catalogService.insertArea(entity);
         return ResponseEntity.ok(entity);
     }
     
+    @PutMapping
+    public ResponseEntity<CatalogAreaTo> actualizarArea(@RequestBody CatalogAreaTo entity) {
+        
+        this.catalogService.updateArea(entity);
+        return ResponseEntity.ok(entity);
+        
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarArea(@PathVariable Long id) {
+        
+        this.catalogService.eliminarArea(id);
+        return ResponseEntity.ok("Area eliminada");
+        
+    }
 }

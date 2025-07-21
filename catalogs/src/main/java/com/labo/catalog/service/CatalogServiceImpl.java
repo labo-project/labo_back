@@ -6,6 +6,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.labo.catalog.dto.CatalogAreaTo;
 import com.labo.catalog.dto.ReportPruebasTo;
 import com.labo.catalog.repository.ICatalogRepo;
 import com.labo.catalog.repository.model.CatalogArea;
@@ -38,6 +39,24 @@ public class CatalogServiceImpl implements ICatalogService{
         catalog.setIdPrueba(id);
         catalog.setTestName(dto.getName());
         return catalog;
+    }
+
+    @Override
+    public void insertArea(CatalogAreaTo area) {
+        var s = mapper.map(area, CatalogArea.class);
+        this.repo.insertArea(s);
+    }
+
+    @Override
+    public void updateArea(CatalogAreaTo area) {
+
+
+       this.repo.updateArea(mapper.map(area, CatalogArea.class));
+    }
+
+    @Override
+    public void eliminarArea(Long id) {
+        this.repo.deleteArea(id);
     }
 
     

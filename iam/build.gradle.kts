@@ -1,5 +1,6 @@
 // Root project build.gradle.kts
 plugins {
+    java
     id("buildlogic.java-application-conventions")
     id("org.springframework.boot") version "3.4.5" 
     id("io.spring.dependency-management") version "1.1.7" 
@@ -9,6 +10,11 @@ plugins {
 }
 
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
 
 dependencies {
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
@@ -44,4 +50,15 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+    doFirst {
+        println("Compiling with args: ${options.compilerArgs}")
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

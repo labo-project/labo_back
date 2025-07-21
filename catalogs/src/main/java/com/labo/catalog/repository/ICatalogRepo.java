@@ -10,6 +10,7 @@ public interface ICatalogRepo {
     public List<CatalogTest> findAllTest();
     public CatalogArea findyById(Long id);
     public List<CatalogArea> findAll();
-    public void insertTest(CatalogTest test);
-    public void updateTest(CatalogTest test);
+    public void insertArea(CatalogArea area);
+    public void updateArea(CatalogArea area);
+    public void deleteArea(Long id);
 }
