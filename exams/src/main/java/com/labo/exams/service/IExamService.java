@@ -13,4 +13,5 @@ public interface IExamService {
     public void completarExamen(DatosTo datos);
     public void crearExamen(Exam e);
     public ExamReportTo buscarReportId(Long id);
+    public void actualizarExamen(ExamTo exam);
 }

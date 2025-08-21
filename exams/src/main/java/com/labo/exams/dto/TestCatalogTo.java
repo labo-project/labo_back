@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TestCatalogTo {
+    private Long id;
     private String name;
     private BigDecimal minValue;
     private BigDecimal maxValue;

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,8 @@ public class ExamServiceImpl implements IExamService {
     private IExamRepo examRepo;
     @Autowired
     private CatalogClient catalogServiceClient;
+    @Autowired
+    private Mapper mapper;
 
     @Override
     public List<DatosTo> showPendingExams(Long areaId) {
@@ -173,6 +176,7 @@ public class ExamServiceImpl implements IExamService {
                     // Convert each PruebasReportTo to TestCatalogTo
                     List<TestCatalogTo> tests = entry.getValue().stream()
                             .map(prueba -> new TestCatalogTo(
+                                    prueba.getId(),
                                     prueba.getNombrePrueba(),
                                     prueba.getMinValue(),
                                     prueba.getMaxValue(),
@@ -182,9 +186,16 @@ public class ExamServiceImpl implements IExamService {
 
                     return new AreaTo(
                             areaName,
-                            tests
-                        );
+                            tests);
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void actualizarExamen(ExamTo exam) {
+       this.examRepo.updateExam(mapper.map(exam, Exam.class));
+       
+    }
+
+
 }
