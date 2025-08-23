@@ -1,14 +1,17 @@
 package com.labo.exams.service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -18,11 +21,20 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.ExamReportTo;
+import com.labo.exams.helpers.FontHelper;
+import com.labo.exams.helpers.LaboratoryInfoHelper;
+import com.labo.exams.helpers.TableStyleHelper;
 
 @Service
 public class ReportServiceImpl implements IReportService {
 
+    private static final String DEFAULT_LOGO_PATH = "classpath:static/images/logo.png"; // Adjust path as needed
+    
     public byte[] generateLabReport(ExamReportTo reportData) {
+        return generateLabReport(reportData, null);
+    }
+    
+    public byte[] generateLabReport(ExamReportTo reportData, String logoPath) {
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -30,9 +42,12 @@ public class ReportServiceImpl implements IReportService {
             PdfWriter.getInstance(document, baos);
             document.open();
 
+            // Add header with logo and lab info
+            addHeader(document, logoPath != null ? logoPath : DEFAULT_LOGO_PATH);
+            document.add(Chunk.NEWLINE);
+
             // Add title
-            Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-            Paragraph title = new Paragraph("LABORATORY REPORT", titleFont);
+            Paragraph title = new Paragraph("LABORATORY REPORT", FontHelper.getTitleFont());
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
             document.add(Chunk.NEWLINE);
@@ -42,89 +57,10 @@ public class ReportServiceImpl implements IReportService {
             document.add(Chunk.NEWLINE);
 
             // Create test results table
-            PdfPTable table = new PdfPTable(4); // 4 columns (reduced from 5)
-            table.setWidthPercentage(100);
-
-            // Set column widths
-            float[] columnWidths = { 3f, 1f, 2f, 1f };
-            table.setWidths(columnWidths);
-
-            table.addCell(createHeaderCell("Nombre"));
-            table.addCell(createHeaderCell("Valor"));
-            table.addCell(createHeaderCell("Valores Referenciales"));
-            table.addCell(createHeaderCell("Referencia"));
-
-            for (AreaTo area : reportData.getAreas()) {
-                // Create area header cell that spans all 4 columns
-                PdfPCell areaHeaderCell = createHeaderCell(area.getName());
-                areaHeaderCell.setColspan(4); // Span across all 4 columns
-                areaHeaderCell.setBackgroundColor(BaseColor.LIGHT_GRAY); // Different color to distinguish from column
-                                                                         // headers
-                areaHeaderCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table.addCell(areaHeaderCell);
-
-                // Add tests for this area
-                for (var test : area.getTests()) {
-                    // Test name
-                    table.addCell(createCell(test.getName()));
-
-                    // Format the value and check if it's outside reference range
-                    double value = ((Number) test.getValor()).doubleValue();
-                    double min = ((Number) test.getMinValue()).doubleValue();
-                    double max = ((Number) test.getMaxValue()).doubleValue();
-
-                    PdfPCell valueCell = createCell(String.format("%.2f", value));
-                    // Highlight abnormal values
-                    if (value < min || value > max) {
-                        valueCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                    }
-                    table.addCell(valueCell);
-
-                    // Combined min-max cell
-                    String refValues = String.format("%.2f - %.2f", min, max);
-                    table.addCell(createCell(refValues));
-
-                    // Reference unit
-                    table.addCell(createCell(test.getReference()));
-                }
-            }
-
-            document.add(table);
-            // // Add interpretation section
-            // document.add(Chunk.NEWLINE);
-            // document.add(new Paragraph("Interpretation:", new
-            // Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
-
-            // Check if any test is outside reference range
-
-            // boolean hasAbnormalValues = false;
-            // for (PruebasReportTo test : reportData.getPruebas()) {
-            // double value = ((Number) test.getValor()).doubleValue();
-            // double min = ((Number) test.getMinValue()).doubleValue();
-            // double max = ((Number) test.getMaxValue()).doubleValue();
-
-            // if (value < min || value > max) {
-            // hasAbnormalValues = true;
-            // String interpretation = test.getNombrePrueba() + " is " +
-            // (value < min ? "below" : "above") +
-            // " the reference range.";
-            // document.add(new Paragraph("• " + interpretation, new
-            // Font(Font.FontFamily.HELVETICA, 12)));
-            // }
-            // }
-
-            // if (!hasAbnormalValues) {
-            // document.add(new Paragraph("All values are within normal reference ranges.",
-            // new Font(Font.FontFamily.HELVETICA, 12)));
-            // }
+            createTestResultsTable(document, reportData);
 
             // Add report footer
-            document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE);
-            Paragraph footer = new Paragraph("Report generated on: " + new java.util.Date(),
-                    new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC));
-            footer.setAlignment(Element.ALIGN_RIGHT);
-            document.add(footer);
+            addFooter(document);
 
             document.close();
             return baos.toByteArray();
@@ -135,70 +71,155 @@ public class ReportServiceImpl implements IReportService {
     }
 
     /**
-     * Creates a box with patient information
+     * Adds header with logo and laboratory information
      */
-    private void addPatientInfoBox(Document document, ExamReportTo reportData) throws Exception {
-        Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
-        Font normalFont = new Font(Font.FontFamily.HELVETICA, 12);
+    private void addHeader(Document document, String logoPath) throws DocumentException, IOException {
+        PdfPTable headerTable = new PdfPTable(2);
+        headerTable.setWidthPercentage(100);
+        headerTable.setWidths(new float[]{1f, 1f});
+        
+        // Left cell - Logo
+        PdfPCell logoCell = new PdfPCell();
+        logoCell.setBorder(Rectangle.NO_BORDER);
+        logoCell.setPadding(10);
+        
+        try {
+            // Try to load logo - you'll need to provide the actual image file
+            Image logo = Image.getInstance(logoPath);
+            logo.scaleToFit(80, 80);
+            logoCell.addElement(logo);
+            
+            // Placeholder for logo - replace with actual logo loading
+            // Paragraph logoPlaceholder = new Paragraph("LOGO", FontHelper.getHeaderFont());
+            // logoPlaceholder.setAlignment(Element.ALIGN_CENTER);
+            // logoCell.addElement(logoPlaceholder);
+        } catch (Exception e) {
+            // If logo can't be loaded, show placeholder
+            Paragraph logoPlaceholder = new Paragraph("LOGO", FontHelper.getHeaderFont());
+            logoPlaceholder.setAlignment(Element.ALIGN_CENTER);
+            logoCell.addElement(logoPlaceholder);
+        }
+        
+        // Right cell - Laboratory info
+        PdfPCell labInfoCell = new PdfPCell();
+        labInfoCell.setBorder(Rectangle.NO_BORDER);
+        labInfoCell.setPadding(10);
+        labInfoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        
+        // Add lab information
+        for (String infoLine : LaboratoryInfoHelper.getLabInfo()) {
+            Paragraph info = new Paragraph(infoLine, FontHelper.getSmallFont());
+            info.setAlignment(Element.ALIGN_RIGHT);
+            labInfoCell.addElement(info);
+        }
+        
+        headerTable.addCell(logoCell);
+        headerTable.addCell(labInfoCell);
+        
+        document.add(headerTable);
+    }
 
-        // Create a table for patient info with border
+    /**
+     * Creates a rounded box with patient information
+     */
+    private void addPatientInfoBox(Document document, ExamReportTo reportData) throws DocumentException {
+        // Create a table for patient info with rounded appearance
         PdfPTable patientInfoTable = new PdfPTable(2);
         patientInfoTable.setWidthPercentage(100);
-        float[] columnWidths = { 1f, 3f };
-        patientInfoTable.setWidths(columnWidths);
+        patientInfoTable.setWidths(new float[]{1f, 3f});
+        
+        // Style the table with rounded appearance
+        TableStyleHelper.applyRoundedTableStyle(patientInfoTable);
 
         // Add patient information rows
-        addInfoRow(patientInfoTable, "Exam ID:", reportData.getExamId().toString(), boldFont, normalFont);
-        addInfoRow(patientInfoTable, "Patient Name:", reportData.getPatient().getName(), boldFont, normalFont);
-
-        // You can add more patient information fields as needed
+        addInfoRow(patientInfoTable, "Exam ID:", reportData.getExamId().toString());
+        addInfoRow(patientInfoTable, "Patient Name:", reportData.getPatient().getName());
         addInfoRow(patientInfoTable, "Patient ID:",
-                reportData.getPatient().getId() != null ? reportData.getPatient().getId().toString() : "N/A", boldFont,
-                normalFont);
-        addInfoRow(patientInfoTable, "Edad:",
-                reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad().toString() : "N/A",
-                boldFont,
-                normalFont);
+                reportData.getPatient().getId() != null ? reportData.getPatient().getId().toString() : "N/A");
+        addInfoRow(patientInfoTable, "Age:",
+                reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad().toString() : "N/A");
         addInfoRow(patientInfoTable, "Collection Date:",
-                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toString() : "N/A", boldFont,
-                normalFont);
-
-        // Set border for the whole table
-        patientInfoTable.getDefaultCell().setBorder(Rectangle.BOX);
-        patientInfoTable.getDefaultCell().setBorderWidth(2);
+                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toString() : "N/A");
 
         document.add(patientInfoTable);
     }
 
     /**
-     * Adds a row to the patient info table
+     * Creates the test results table with modern styling
      */
-    private void addInfoRow(PdfPTable table, String label, String value, Font boldFont, Font normalFont) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, boldFont));
-        labelCell.setBorder(Rectangle.NO_BORDER);
-        labelCell.setPadding(5);
+    private void createTestResultsTable(Document document, ExamReportTo reportData) throws DocumentException {
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{3f, 1f, 2f, 1f});
+        
+        // Apply modern table styling
+        TableStyleHelper.applyModernTableStyle(table);
 
-        PdfPCell valueCell = new PdfPCell(new Phrase(value, normalFont));
-        valueCell.setBorder(Rectangle.NO_BORDER);
-        valueCell.setPadding(5);
+        // Add headers
+        table.addCell(TableStyleHelper.createModernHeaderCell("Test Name"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Value"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Reference Range"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Unit"));
+
+        for (AreaTo area : reportData.getAreas()) {
+            // Create area header cell that spans all 4 columns
+            PdfPCell areaHeaderCell = TableStyleHelper.createAreaHeaderCell(area.getName());
+            table.addCell(areaHeaderCell);
+
+            // Add tests for this area
+            for (var test : area.getTests()) {
+                // Test name
+                table.addCell(TableStyleHelper.createModernDataCell(test.getName()));
+
+                // Format the value and check if it's outside reference range
+                double value = ((Number) test.getValor()).doubleValue();
+                double min = ((Number) test.getMinValue()).doubleValue();
+                double max = ((Number) test.getMaxValue()).doubleValue();
+
+                PdfPCell valueCell = TableStyleHelper.createModernDataCell(String.format("%.2f", value));
+                
+                // Highlight abnormal values with a subtle color
+                if (value < min || value > max) {
+                    valueCell.setBackgroundColor(new BaseColor(255, 240, 240)); // Light red
+                }
+                table.addCell(valueCell);
+
+                // Combined min-max cell
+                String refValues = String.format("%.2f - %.2f", min, max);
+                table.addCell(TableStyleHelper.createModernDataCell(refValues));
+
+                // Reference unit
+                table.addCell(TableStyleHelper.createModernDataCell(test.getReference()));
+            }
+        }
+
+        document.add(table);
+    }
+
+    /**
+     * Adds a row to the patient info table with modern styling
+     */
+    private void addInfoRow(PdfPTable table, String label, String value) {
+        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontHelper.getBoldFont()));
+        TableStyleHelper.styleInfoCell(labelCell, true);
+
+        PdfPCell valueCell = new PdfPCell(new Phrase(value, FontHelper.getNormalFont()));
+        TableStyleHelper.styleInfoCell(valueCell, false);
 
         table.addCell(labelCell);
         table.addCell(valueCell);
     }
 
-    private PdfPCell createHeaderCell(String text) {
-        Font headerFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
-        PdfPCell cell = new PdfPCell(new Phrase(text, headerFont));
-        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setPadding(5);
-        return cell;
-    }
-
-    private PdfPCell createCell(String text) {
-        PdfPCell cell = new PdfPCell(new Phrase(text));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setPadding(5);
-        return cell;
+    /**
+     * Adds modern footer to the document
+     */
+    private void addFooter(Document document) throws DocumentException {
+        document.add(Chunk.NEWLINE);
+        document.add(Chunk.NEWLINE);
+        
+        Paragraph footer = new Paragraph("Report generated on: " + new java.util.Date(), 
+                FontHelper.getItalicSmallFont());
+        footer.setAlignment(Element.ALIGN_RIGHT);
+        document.add(footer);
     }
 }
