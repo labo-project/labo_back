@@ -3,22 +3,33 @@ package com.labo.exams.helpers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import com.labo.exams.config.ReportConfiguration;
+
 import lombok.Data;
 
 /**
  * Helper class for managing laboratory information displayed in reports
  */
-@Data
+@Component
 public class LaboratoryInfoHelper {
     
-    // Laboratory configuration - can be moved to properties file
-    private static final String LAB_NAME = "MedLab Analytics";
-    private static final String LAB_ADDRESS = "123 Medical Center Drive";
-    private static final String LAB_CITY = "Healthcare City, HC 12345";
-    private static final String LAB_PHONE = "Phone: +1 (555) 123-4567";
-    private static final String LAB_EMAIL = "info@medlabanalytics.com";
-    private static final String LAB_LICENSE = "License: ML-2024-001";
-    private static final String LAB_WEBSITE = "www.medlabanalytics.com";
+    private static ReportConfiguration reportConfiguration;
+
+    public LaboratoryInfoHelper(ReportConfiguration reportConfiguration) {
+        LaboratoryInfoHelper.reportConfiguration = reportConfiguration;
+    }
+
+   
+
+    // Fallback default values if configuration is not available
+    private static final String DEFAULT_LAB_NAME = "MedLab Analytics";
+    private static final String DEFAULT_LAB_ADDRESS = "123 Medical Center Drive";
+    private static final String DEFAULT_LAB_CITY = "Healthcare City, HC 12345";
+    private static final String DEFAULT_LAB_PHONE = "Phone: +1 (555) 123-4567";
+    private static final String DEFAULT_LAB_EMAIL = "info@medlabanalytics.com";
+
 
     /**
      * Returns formatted laboratory information for display in report header
@@ -26,13 +37,22 @@ public class LaboratoryInfoHelper {
     public static List<String> getLabInfo() {
         List<String> labInfo = new ArrayList<>();
         
-        labInfo.add(LAB_NAME);
-        labInfo.add(LAB_ADDRESS);
-        labInfo.add(LAB_CITY);
-        labInfo.add(LAB_PHONE);
-        labInfo.add(LAB_EMAIL);
-        labInfo.add(LAB_LICENSE);
-        labInfo.add(LAB_WEBSITE);
+        if (reportConfiguration != null && reportConfiguration.getInfo() != null) {
+            ReportConfiguration.Info info = reportConfiguration.getInfo();
+            
+            labInfo.add(getValueOrDefault(info.getName(), DEFAULT_LAB_NAME));
+            labInfo.add(getValueOrDefault(info.getAddress(), DEFAULT_LAB_ADDRESS));
+            labInfo.add(getValueOrDefault(info.getCity(), DEFAULT_LAB_CITY));
+            labInfo.add(getValueOrDefault(info.getPhone(), DEFAULT_LAB_PHONE));
+            labInfo.add(getValueOrDefault(info.getEmail(), DEFAULT_LAB_EMAIL));
+        } else {
+            // Use default values
+            labInfo.add(DEFAULT_LAB_NAME);
+            labInfo.add(DEFAULT_LAB_ADDRESS);
+            labInfo.add(DEFAULT_LAB_CITY);
+            labInfo.add(DEFAULT_LAB_PHONE);
+            labInfo.add(DEFAULT_LAB_EMAIL);
+        }
         
         return labInfo;
     }
@@ -41,21 +61,47 @@ public class LaboratoryInfoHelper {
      * Returns laboratory name only
      */
     public static String getLabName() {
-        return LAB_NAME;
+        if (reportConfiguration != null && reportConfiguration.getInfo() != null) {
+            return getValueOrDefault(reportConfiguration.getInfo().getName(), DEFAULT_LAB_NAME);
+        }
+        return DEFAULT_LAB_NAME;
     }
 
     /**
      * Returns laboratory contact information
      */
     public static String getLabContact() {
-        return LAB_PHONE + " | " + LAB_EMAIL;
+        String phone = DEFAULT_LAB_PHONE;
+        String email = DEFAULT_LAB_EMAIL;
+        
+        if (reportConfiguration != null && reportConfiguration.getInfo() != null) {
+            phone = getValueOrDefault(reportConfiguration.getInfo().getPhone(), DEFAULT_LAB_PHONE);
+            email = getValueOrDefault(reportConfiguration.getInfo().getEmail(), DEFAULT_LAB_EMAIL);
+        }
+        
+        return phone + " | " + email;
     }
 
     /**
      * Returns laboratory address information
      */
     public static String getLabAddress() {
-        return LAB_ADDRESS + ", " + LAB_CITY;
+        String address = DEFAULT_LAB_ADDRESS;
+        String city = DEFAULT_LAB_CITY;
+        
+        if (reportConfiguration != null && reportConfiguration.getInfo() != null) {
+            address = getValueOrDefault(reportConfiguration.getInfo().getAddress(), DEFAULT_LAB_ADDRESS);
+            city = getValueOrDefault(reportConfiguration.getInfo().getCity(), DEFAULT_LAB_CITY);
+        }
+        
+        return address + ", " + city;
+    }
+
+    /**
+     * Helper method to get value or default
+     */
+    private static String getValueOrDefault(String value, String defaultValue) {
+        return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
     }
 
     /**
@@ -64,10 +110,10 @@ public class LaboratoryInfoHelper {
     public static List<String> getCompactLabInfo() {
         List<String> compactInfo = new ArrayList<>();
         
-        compactInfo.add(LAB_NAME);
-        compactInfo.add(LAB_ADDRESS);
-        compactInfo.add(LAB_PHONE);
-        compactInfo.add(LAB_EMAIL);
+        compactInfo.add(DEFAULT_LAB_NAME);
+        compactInfo.add(DEFAULT_LAB_ADDRESS);
+        compactInfo.add(DEFAULT_LAB_PHONE);
+        compactInfo.add(DEFAULT_LAB_EMAIL);
         
         return compactInfo;
     }
@@ -76,6 +122,7 @@ public class LaboratoryInfoHelper {
      * Custom laboratory information configuration
      * This method allows setting custom lab info from application properties
      */
+    @Data
     public static class LabInfoBuilder {
         private String name;
         private String address;
@@ -105,33 +152,5 @@ public class LaboratoryInfoHelper {
      */
     public static LabInfoBuilder builder() {
         return new LabInfoBuilder();
-    }
-
-    /**
-     * Returns laboratory certification and quality information
-     */
-    public static List<String> getCertificationInfo() {
-        List<String> certInfo = new ArrayList<>();
-        
-        certInfo.add("CAP Accredited Laboratory");
-        certInfo.add("CLIA Certified");
-        certInfo.add("ISO 15189:2012 Compliant");
-        certInfo.add("Quality Assurance Program");
-        
-        return certInfo;
-    }
-
-    /**
-     * Returns emergency contact information
-     */
-    public static String getEmergencyContact() {
-        return "24/7 Emergency Line: +1 (555) 911-LABS";
-    }
-
-    /**
-     * Returns business hours
-     */
-    public static String getBusinessHours() {
-        return "Hours: Mon-Fri 6:00 AM - 10:00 PM | Sat-Sun 8:00 AM - 6:00 PM";
     }
 }

@@ -10,8 +10,6 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -23,6 +21,7 @@ import com.labo.exams.dto.AreaTo;
 import com.labo.exams.dto.ExamReportTo;
 import com.labo.exams.helpers.FontHelper;
 import com.labo.exams.helpers.LaboratoryInfoHelper;
+import com.labo.exams.helpers.LogoHelper;
 import com.labo.exams.helpers.TableStyleHelper;
 
 @Service
@@ -78,27 +77,13 @@ public class ReportServiceImpl implements IReportService {
         headerTable.setWidthPercentage(100);
         headerTable.setWidths(new float[]{1f, 1f});
         
-        // Left cell - Logo
-        PdfPCell logoCell = new PdfPCell();
-        logoCell.setBorder(Rectangle.NO_BORDER);
-        logoCell.setPadding(10);
-        
-        try {
-            // Try to load logo - you'll need to provide the actual image file
-            Image logo = Image.getInstance(logoPath);
-            logo.scaleToFit(80, 80);
-            logoCell.addElement(logo);
-            
-            // Placeholder for logo - replace with actual logo loading
-            // Paragraph logoPlaceholder = new Paragraph("LOGO", FontHelper.getHeaderFont());
-            // logoPlaceholder.setAlignment(Element.ALIGN_CENTER);
-            // logoCell.addElement(logoPlaceholder);
-        } catch (Exception e) {
-            // If logo can't be loaded, show placeholder
-            Paragraph logoPlaceholder = new Paragraph("LOGO", FontHelper.getHeaderFont());
-            logoPlaceholder.setAlignment(Element.ALIGN_CENTER);
-            logoCell.addElement(logoPlaceholder);
-        }
+        // Left cell - Logo using LogoHelper
+        PdfPCell logoCell = LogoHelper.createLogoCell(
+            logoPath, 
+            LaboratoryInfoHelper.getLabName(), 
+            80f, 
+            80f
+        );
         
         // Right cell - Laboratory info
         PdfPCell labInfoCell = new PdfPCell();
@@ -132,17 +117,31 @@ public class ReportServiceImpl implements IReportService {
         TableStyleHelper.applyRoundedTableStyle(patientInfoTable);
 
         // Add patient information rows
-        addInfoRow(patientInfoTable, "Exam ID:", reportData.getExamId().toString());
-        addInfoRow(patientInfoTable, "Patient Name:", reportData.getPatient().getName());
-        addInfoRow(patientInfoTable, "Patient ID:",
-                reportData.getPatient().getId() != null ? reportData.getPatient().getId().toString() : "N/A");
-        addInfoRow(patientInfoTable, "Age:",
+        addInfoRow(patientInfoTable, "ID:", reportData.getExamId().toString());
+        addInfoRow(patientInfoTable, "Nombre del Paciente:", reportData.getPatient().getName());
+        addInfoRow(patientInfoTable, "Cédula Paciente:",
+                reportData.getPatient().getId() != null ? reportData.getPatient().getCedula().toString() + " " +  reportData.getPatient().getApellido() : "N/A");
+        addInfoRow(patientInfoTable, "Edad:",
                 reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad().toString() : "N/A");
-        addInfoRow(patientInfoTable, "Collection Date:",
-                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toString() : "N/A");
-
+        addInfoRow(patientInfoTable, "Fecha de Recolección de Muestra:",
+                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toLocalDate().toString() : "N/A");
         document.add(patientInfoTable);
     }
+
+      /**
+     * Adds a row to the patient info table with modern styling
+     */
+    private void addInfoRow(PdfPTable table, String label, String value) {
+        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontHelper.getBoldFont()));
+        TableStyleHelper.styleInfoCell(labelCell, true);
+
+        PdfPCell valueCell = new PdfPCell(new Phrase(value, FontHelper.getNormalFont()));
+        TableStyleHelper.styleInfoCell(valueCell, false);
+
+        table.addCell(labelCell);
+        table.addCell(valueCell);
+    }
+
 
     /**
      * Creates the test results table with modern styling
@@ -156,10 +155,10 @@ public class ReportServiceImpl implements IReportService {
         TableStyleHelper.applyModernTableStyle(table);
 
         // Add headers
-        table.addCell(TableStyleHelper.createModernHeaderCell("Test Name"));
-        table.addCell(TableStyleHelper.createModernHeaderCell("Value"));
-        table.addCell(TableStyleHelper.createModernHeaderCell("Reference Range"));
-        table.addCell(TableStyleHelper.createModernHeaderCell("Unit"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Prueba"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Valor"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Referencia"));
+        table.addCell(TableStyleHelper.createModernHeaderCell("Unidad"));
 
         for (AreaTo area : reportData.getAreas()) {
             // Create area header cell that spans all 4 columns
@@ -196,20 +195,7 @@ public class ReportServiceImpl implements IReportService {
         document.add(table);
     }
 
-    /**
-     * Adds a row to the patient info table with modern styling
-     */
-    private void addInfoRow(PdfPTable table, String label, String value) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontHelper.getBoldFont()));
-        TableStyleHelper.styleInfoCell(labelCell, true);
-
-        PdfPCell valueCell = new PdfPCell(new Phrase(value, FontHelper.getNormalFont()));
-        TableStyleHelper.styleInfoCell(valueCell, false);
-
-        table.addCell(labelCell);
-        table.addCell(valueCell);
-    }
-
+  
     /**
      * Adds modern footer to the document
      */

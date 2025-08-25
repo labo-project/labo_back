@@ -8,3 +8,6 @@ build
 /.vscode
 bin/
 .env
+
+# images
+*.png

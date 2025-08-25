@@ -53,3 +53,22 @@ api:
 #   endpoint:
 #     health:
 #       show-details: always
+
+
+# Lab Info
+
+# Laboratory Information Configuration
+lab:
+  info:
+    name: ${LAB_NAME:MedLab Analytics}
+    address: ${LAB_ADDRESS:123 Medical Center Drive}
+    city: ${LAB_CITY:Healthcare City, Country}
+    phone: ${LAB_PHONE:+001 2345678901}
+    email: ${LAB_EMAIL:www.medlabanalytics.com}
+
+  # Logo Configuration
+  logo:
+    path: classpath:static/images/logo.png
+    width: 80
+    height: 80
+
