@@ -28,11 +28,11 @@ import com.labo.exams.helpers.TableStyleHelper;
 public class ReportServiceImpl implements IReportService {
 
     private static final String DEFAULT_LOGO_PATH = "classpath:static/images/logo.png"; // Adjust path as needed
-    
+
     public byte[] generateLabReport(ExamReportTo reportData) {
         return generateLabReport(reportData, null);
     }
-    
+
     public byte[] generateLabReport(ExamReportTo reportData, String logoPath) {
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,73 +75,91 @@ public class ReportServiceImpl implements IReportService {
     private void addHeader(Document document, String logoPath) throws DocumentException, IOException {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
-        headerTable.setWidths(new float[]{1f, 1f});
-        
+        headerTable.setWidths(new float[] { 1f, 1f });
+
         // Left cell - Logo using LogoHelper
         PdfPCell logoCell = LogoHelper.createLogoCell(
-            logoPath, 
-            LaboratoryInfoHelper.getLabName(), 
-            80f, 
-            80f
-        );
-        
+                logoPath,
+                LaboratoryInfoHelper.getLabName(),
+                80f,
+                80f);
+
         // Right cell - Laboratory info
         PdfPCell labInfoCell = new PdfPCell();
         labInfoCell.setBorder(Rectangle.NO_BORDER);
         labInfoCell.setPadding(10);
         labInfoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        
+
         // Add lab information
         for (String infoLine : LaboratoryInfoHelper.getLabInfo()) {
             Paragraph info = new Paragraph(infoLine, FontHelper.getSmallFont());
             info.setAlignment(Element.ALIGN_RIGHT);
             labInfoCell.addElement(info);
         }
-        
+
         headerTable.addCell(logoCell);
         headerTable.addCell(labInfoCell);
-        
+
         document.add(headerTable);
     }
 
-    /**
-     * Creates a rounded box with patient information
-     */
     private void addPatientInfoBox(Document document, ExamReportTo reportData) throws DocumentException {
-        // Create a table for patient info with rounded appearance
-        PdfPTable patientInfoTable = new PdfPTable(2);
+        // Create a table for patient info with 4 columns
+        PdfPTable patientInfoTable = new PdfPTable(4);
         patientInfoTable.setWidthPercentage(100);
-        patientInfoTable.setWidths(new float[]{1f, 3f});
-        
+        patientInfoTable.setWidths(new float[] { 1f, 2f, 1f, 2f });
+
         // Style the table with rounded appearance
         TableStyleHelper.applyRoundedTableStyle(patientInfoTable);
 
-        // Add patient information rows
-        addInfoRow(patientInfoTable, "ID:", reportData.getExamId().toString());
-        addInfoRow(patientInfoTable, "Nombre del Paciente:", reportData.getPatient().getName());
-        addInfoRow(patientInfoTable, "Cédula Paciente:",
-                reportData.getPatient().getId() != null ? reportData.getPatient().getCedula().toString() + " " +  reportData.getPatient().getApellido() : "N/A");
-        addInfoRow(patientInfoTable, "Edad:",
+        // Add information in 2x2 layout
+        addInfoRowPair(patientInfoTable,
+                "Exam ID:", reportData.getExamId().toString(),
+                "Nombre del Paciente:", reportData.getPatient().getName() + " " + reportData.getPatient().getApellido());
+
+        addInfoRowPair(patientInfoTable,
+                "Cédula Paciente:",
+                reportData.getPatient().getId() != null
+                        ? reportData.getPatient().getCedula().toString()
+                        : "N/A",
+                "Edad:",
                 reportData.getPatient().getEdad() != null ? reportData.getPatient().getEdad().toString() : "N/A");
-        addInfoRow(patientInfoTable, "Fecha de Recolección de Muestra:",
-                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toLocalDate().toString() : "N/A");
+
+        // For the last row with only one pair, pass empty strings for the second pair
+        addInfoRowPair(patientInfoTable,
+                "Fecha de Recolección de Muestra:",
+                reportData.getFechaRealizada() != null ? reportData.getFechaRealizada().toLocalDate().toString() : "N/A",
+                "ID Paciente", reportData.getPatient().getId().toString());
+
         document.add(patientInfoTable);
     }
 
-      /**
-     * Adds a row to the patient info table with modern styling
-     */
-    private void addInfoRow(PdfPTable table, String label, String value) {
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontHelper.getBoldFont()));
-        TableStyleHelper.styleInfoCell(labelCell, true);
+    // Helper method to add a pair of label-data combinations in one row
+    private void addInfoRowPair(PdfPTable table, String label1, String value1, String label2, String value2) {
+        // First pair (label1, value1)
+        PdfPCell labelCell1 = new PdfPCell(new Phrase(label1, FontHelper.getBoldFont()));
+        TableStyleHelper.styleInfoCell(labelCell1, true);
+        table.addCell(labelCell1);
 
-        PdfPCell valueCell = new PdfPCell(new Phrase(value, FontHelper.getNormalFont()));
-        TableStyleHelper.styleInfoCell(valueCell, false);
+        PdfPCell valueCell1 = new PdfPCell(new Phrase(value1, FontHelper.getNormalFont()));
+        TableStyleHelper.styleInfoCell(valueCell1, false);
+        table.addCell(valueCell1);
 
-        table.addCell(labelCell);
-        table.addCell(valueCell);
+        // Second pair (label2, value2)
+        if (!label2.isEmpty()) {
+            PdfPCell labelCell2 = new PdfPCell(new Phrase(label2, FontHelper.getBoldFont()));
+            TableStyleHelper.styleInfoCell(labelCell2, true);
+            table.addCell(labelCell2);
+
+            PdfPCell valueCell2 = new PdfPCell(new Phrase(value2, FontHelper.getNormalFont()));
+            TableStyleHelper.styleInfoCell(valueCell2, false);
+            table.addCell(valueCell2);
+        } else {
+            // Add empty cells if no second pair
+            table.addCell(new PdfPCell(new Phrase("")));
+            table.addCell(new PdfPCell(new Phrase("")));
+        }
     }
-
 
     /**
      * Creates the test results table with modern styling
@@ -149,8 +167,8 @@ public class ReportServiceImpl implements IReportService {
     private void createTestResultsTable(Document document, ExamReportTo reportData) throws DocumentException {
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{3f, 1f, 2f, 1f});
-        
+        table.setWidths(new float[] { 3f, 1f, 2f, 1f });
+
         // Apply modern table styling
         TableStyleHelper.applyModernTableStyle(table);
 
@@ -176,7 +194,7 @@ public class ReportServiceImpl implements IReportService {
                 double max = ((Number) test.getMaxValue()).doubleValue();
 
                 PdfPCell valueCell = TableStyleHelper.createModernDataCell(String.format("%.2f", value));
-                
+
                 // Highlight abnormal values with a subtle color
                 if (value < min || value > max) {
                     valueCell.setBackgroundColor(new BaseColor(255, 240, 240)); // Light red
@@ -195,15 +213,14 @@ public class ReportServiceImpl implements IReportService {
         document.add(table);
     }
 
-  
     /**
      * Adds modern footer to the document
      */
     private void addFooter(Document document) throws DocumentException {
         document.add(Chunk.NEWLINE);
         document.add(Chunk.NEWLINE);
-        
-        Paragraph footer = new Paragraph("Report generated on: " + new java.util.Date(), 
+
+        Paragraph footer = new Paragraph("Report generated on: " + new java.util.Date(),
                 FontHelper.getItalicSmallFont());
         footer.setAlignment(Element.ALIGN_RIGHT);
         document.add(footer);
