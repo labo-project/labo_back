@@ -68,7 +68,7 @@ lab:
 
   # Logo Configuration
   logo:
-    path: classpath:static/images/logo.png
+    path: ${LOGO_PATH:classpath:static/images/logo.png}
     width: 80
     height: 80
 
