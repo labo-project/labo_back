@@ -25,8 +25,11 @@ public class Patient {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 10)
     private String cedula;
+
+    @Column(nullable = true, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private Integer edad;
