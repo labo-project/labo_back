@@ -84,6 +84,15 @@ public class CatalogRepoImpl implements ICatalogRepo {
         this.entityManager.remove(this.findyById(id));
     }
 
+    @Override
+    public void updateTest(CatalogTest test) {
+       var existingTest = this.entityManager.find(CatalogTest.class, test.getId());
+       existingTest.setName(test.getName());
+       existingTest.setMinValue(test.getMinValue());
+       existingTest.setMaxValue(test.getMaxValue());
+       existingTest.setReference(test.getReference());
+    }
+
  
 
     

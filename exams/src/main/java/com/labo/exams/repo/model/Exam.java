@@ -34,7 +34,7 @@ public class Exam {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
-    @Column(name = "completition_date", nullable = false)
+    @Column(name = "completition_date", nullable = true)
     private LocalDateTime completitionDate;
 
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)

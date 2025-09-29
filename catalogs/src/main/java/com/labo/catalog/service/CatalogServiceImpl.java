@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.labo.catalog.dto.CatalogAreaTo;
+import com.labo.catalog.dto.CatalogTestTo;
 import com.labo.catalog.dto.ReportPruebasTo;
 import com.labo.catalog.repository.ICatalogRepo;
 import com.labo.catalog.repository.model.CatalogArea;
+import com.labo.catalog.repository.model.CatalogTest;
 
 @Service
 public class CatalogServiceImpl implements ICatalogService{
@@ -57,6 +59,11 @@ public class CatalogServiceImpl implements ICatalogService{
     @Override
     public void eliminarArea(Long id) {
         this.repo.deleteArea(id);
+    }
+
+    @Override
+    public void updateTest(CatalogTestTo test) {
+        this.repo.updateTest(mapper.map(test,CatalogTest.class));
     }
 
     

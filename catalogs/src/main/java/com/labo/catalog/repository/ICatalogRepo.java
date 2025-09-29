@@ -13,4 +13,5 @@ public interface ICatalogRepo {
     public void insertArea(CatalogArea area);
     public void updateArea(CatalogArea area);
     public void deleteArea(Long id);
+    public void updateTest(CatalogTest test);
 }
