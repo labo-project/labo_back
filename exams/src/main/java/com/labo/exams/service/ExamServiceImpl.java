@@ -99,6 +99,7 @@ public class ExamServiceImpl implements IExamService {
                     examTo.setId(e.getId());
                     examTo.setPatientId(e.getPatientId());
                     examTo.setUserId(e.getUserId());
+                    examTo.setCreationDate(e.getCreationDate());
                     return examTo;
                 })
                 .collect(Collectors.toList());
