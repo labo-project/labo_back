@@ -12,4 +12,5 @@ public class CatalogTestTo {
     private BigDecimal minValue;
     private BigDecimal maxValue;
     private String reference;
+    private Long areaId;
 }

@@ -59,9 +59,9 @@ public class CatalogController {
     }
 
     @PostMapping
-    public ResponseEntity<CatalogAreaTo> insertarArea(@RequestBody CatalogAreaTo entity) {
+    public ResponseEntity<CatalogTestTo> insertarTest(@RequestBody CatalogTestTo entity) {
         
-        this.catalogService.insertArea(entity);
+        this.catalogService.insertTest(entity);
         return ResponseEntity.ok(entity);
     }
     

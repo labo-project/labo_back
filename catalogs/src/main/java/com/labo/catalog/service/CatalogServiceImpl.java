@@ -66,6 +66,16 @@ public class CatalogServiceImpl implements ICatalogService{
         this.repo.updateTest(mapper.map(test,CatalogTest.class));
     }
 
+    @Override
+    public void insertTest(CatalogTestTo test) {
+
+        var area = this.repo.findyById(test.getAreaId());
+        var prueba = mapper.map(test, CatalogTest.class);
+        prueba.setArea(area);
+        this.repo.insertTest(prueba);
+
+    }
+
     
 
     

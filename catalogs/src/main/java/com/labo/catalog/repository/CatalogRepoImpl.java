@@ -93,6 +93,11 @@ public class CatalogRepoImpl implements ICatalogRepo {
        existingTest.setReference(test.getReference());
     }
 
+    @Override
+    public void insertTest(CatalogTest test) {
+        this.entityManager.persist(test);
+    }
+
  
 
     

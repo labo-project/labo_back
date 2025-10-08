@@ -11,6 +11,7 @@ public interface ICatalogRepo {
     public CatalogArea findyById(Long id);
     public List<CatalogArea> findAll();
     public void insertArea(CatalogArea area);
+    public void insertTest(CatalogTest area);
     public void updateArea(CatalogArea area);
     public void deleteArea(Long id);
     public void updateTest(CatalogTest test);

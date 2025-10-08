@@ -12,6 +12,7 @@ public interface ICatalogService {
     public List<CatalogArea> findAll();
     public ReportPruebasTo findTest(Long id);
     public void insertArea(CatalogAreaTo area);
+    public void insertTest(CatalogTestTo test);
     public void updateArea(CatalogAreaTo area);
     public void eliminarArea(Long id);
     public void updateTest(CatalogTestTo test);
