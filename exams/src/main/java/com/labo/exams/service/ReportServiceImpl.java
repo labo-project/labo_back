@@ -189,7 +189,7 @@ public class ReportServiceImpl implements IReportService {
                 table.addCell(TableStyleHelper.createModernDataCell(test.getName()));
 
                 // Format the value and check if it's outside reference range
-                double value = ((Number) test.getValor()).doubleValue();
+                double value = test.getValor() == null ? 0 :((Number) test.getValor()).doubleValue();
                 double min = ((Number) test.getMinValue()).doubleValue();
                 double max = ((Number) test.getMaxValue()).doubleValue();
 
