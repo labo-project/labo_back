@@ -1,7 +1,18 @@
 package com.labo.catalog.repository;
 
+import java.util.List;
+
+import com.labo.catalog.repository.model.CatalogArea;
 import com.labo.catalog.repository.model.CatalogTest;
 
 public interface ICatalogRepo {
-    public CatalogTest findyById(Long id);
+    public CatalogTest findyByIdTest(Long id);
+    public List<CatalogTest> findAllTest();
+    public CatalogArea findyById(Long id);
+    public List<CatalogArea> findAll();
+    public void insertArea(CatalogArea area);
+    public void insertTest(CatalogTest area);
+    public void updateArea(CatalogArea area);
+    public void deleteArea(Long id);
+    public void updateTest(CatalogTest test);
 }

@@ -1,6 +1,9 @@
 package com.labo.exams.repo.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +24,7 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id", nullable = false)
     private Exam exam;
@@ -29,7 +33,7 @@ public class Test {
     private Long testId;
 
     @Column
-    private String result;
+    private BigDecimal result;
 
     @Column(name = "completion_date")
     private LocalDateTime completionDate;

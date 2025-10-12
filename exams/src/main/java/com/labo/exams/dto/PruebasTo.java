@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class PruebasTo {
+    private Long id;
     private String nombrePrueba;
     private BigDecimal valor;
 }

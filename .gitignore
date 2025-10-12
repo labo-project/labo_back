@@ -6,3 +6,8 @@ build
 
 /list
 /.vscode
+bin/
+.env
+
+# images
+*.png

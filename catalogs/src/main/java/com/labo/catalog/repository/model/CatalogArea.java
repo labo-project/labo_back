@@ -3,8 +3,6 @@ package com.labo.catalog.repository.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +24,6 @@ public class CatalogArea {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatalogTest> tests;
 }

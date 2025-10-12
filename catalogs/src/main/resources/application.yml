@@ -1,11 +1,11 @@
 # src/main/resources/application.yml
 spring:
   application:
-    name: patients  # Change this for each service
+    name: catalogs  # Change this for each service
   datasource:
-    url: jdbc:postgresql://localhost:5432/labexams
-    username: postgres
-    password: admingres
+    url: jdbc:postgresql://${DB_HOSTNAME:localhost}:${DB_PORT:5432}/${DB_NAME:labexams}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:admingres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,7 +17,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8082  # Different port for each service
+  port: 8083  # Different port for each service
 
 # Eureka Client Configuration
 # eureka:
@@ -38,7 +38,9 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
-
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-at-least-256-bits-long-for-HS256}
+  expiration: 36000 # 1 hour in seconds
 # Actuator endpoints for monitoring
 # management:
 #   endpoints:

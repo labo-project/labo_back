@@ -27,19 +27,21 @@ public class Exam {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-    
+
     @Column(nullable = false)
     private Boolean status;
 
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
-    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Test> areas;
+    @Column(name = "completition_date", nullable = true)
+    private LocalDateTime completitionDate;
+
+    @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
+    private List<Test> tests;
 
     @PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();
     }
 }
-

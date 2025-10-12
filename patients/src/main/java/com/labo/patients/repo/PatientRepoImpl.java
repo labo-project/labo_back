@@ -1,5 +1,7 @@
 package com.labo.patients.repo;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.labo.patients.repo.model.Patient;
@@ -18,9 +20,24 @@ public class PatientRepoImpl implements IPatientRepo {
 
     @Override
     public Patient findById(Long id) {
-        TypedQuery<Patient> myQuery = this.entityManager.createQuery("SELECT e FROM Patient e WHERE e.id = :id",
-         Patient.class).setParameter("id", id);
-        return myQuery.getSingleResult();
+        return this.entityManager.find(Patient.class, id);
+    }
+
+    @Override
+    public List<Patient> findAll() {
+        TypedQuery<Patient> myQuery = this.entityManager
+            .createQuery("SELECT e FROM Patient e", Patient.class);
+        return myQuery.getResultList();
+    }
+
+    @Override
+    public void crear(Patient p) {
+        this.entityManager.persist(p);
+    }
+
+    @Override
+    public void update(Patient p) {
+        this.entityManager.merge(p);
     }
     
 }

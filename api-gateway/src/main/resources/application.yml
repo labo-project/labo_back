@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: ${FRONT_URL}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        - id: exams
+          uri: ${EXAMS_URL}
+          predicates:
+            - Path=/exams/**
+          filters:
+            - StripPrefix=1
+        - id: patients
+          uri: ${PATIENTS_URL}
+          predicates:
+            - Path=/patients/**
+          filters:
+            - StripPrefix=1
+        - id: catalogs
+          uri: ${CATALOGS_URL}
+          predicates:
+            - Path=/catalogs/**
+          filters:
+            - StripPrefix=1
+        - id: iam
+          uri: ${IAM_URL}
+          predicates:
+            - Path=/iam/**
+          filters:
+            - StripPrefix=1

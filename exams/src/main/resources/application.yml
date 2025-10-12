@@ -3,9 +3,9 @@ spring:
   application:
     name: exams  # Change this for each service
   datasource:
-    url: jdbc:postgresql://localhost:5432/labexams
-    username: postgres
-    password: admingres
+    url: jdbc:postgresql://${DB_HOSTNAME:localhost}:${DB_PORT:5432}/${DB_NAME:labexams}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:admingres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,7 +17,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080  # Different port for each service
+  port: 8081  # Different port for each service
 
 # Eureka Client Configuration
 # eureka:
@@ -29,16 +29,21 @@ server:
 #     instanceId: ${spring.application.name}:${random.uuid}
 
 # Logging Configuration
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-at-least-256-bits-long-for-HS256}
+  expiration: 36000 # 1 hour in seconds
 logging:
   level:
     org:
       hibernate:
-        SQL: DEBUG
+        # SQL: DEBUG
         type:
           descriptor:
             sql:
               BasicBinder: TRACE
-
+api:
+  gateway:
+    url: ${API_GATEWAY_URL:http://localhost:8080}
 # Actuator endpoints for monitoring
 # management:
 #   endpoints:
@@ -48,3 +53,22 @@ logging:
 #   endpoint:
 #     health:
 #       show-details: always
+
+
+# Lab Info
+
+# Laboratory Information Configuration
+lab:
+  info:
+    name: ${LAB_NAME:MedLab Analytics}
+    address: ${LAB_ADDRESS:123 Medical Center Drive}
+    city: ${LAB_CITY:Healthcare City, Country}
+    phone: ${LAB_PHONE:+001 2345678901}
+    email: ${LAB_EMAIL:www.medlabanalytics.com}
+
+  # Logo Configuration
+  logo:
+    path: ${LOGO_PATH:classpath:static/images/logo.png}
+    width: 80
+    height: 80
+
