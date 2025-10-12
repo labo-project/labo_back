@@ -45,7 +45,7 @@ public class ExamsController {
         this.examService.crearExamen(e);
         ExamTo respuesta = new ExamTo();
         respuesta.setId(e.getId());
-        respuesta.setPatientId(e.getPatientId());
+        respuesta.setPacienteId(e.getPacienteId());
         respuesta.setUserId(e.getUserId());
         return ResponseEntity.ok(respuesta);
     }

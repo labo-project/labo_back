@@ -9,9 +9,9 @@ public class PruebasReportTo {
     private Long id;
     private String nombrePrueba;
     private String referencia;
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
+    private BigDecimal valorMin;
+    private BigDecimal valorMax;
     private BigDecimal valor;
     private Long idArea;
-    private String areaName;
+    private String nombreArea;
 }

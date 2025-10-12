@@ -8,9 +8,9 @@ import lombok.Data;
 public class CatalogTestTo {
     
     private Long id;
-    private String name;
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
-    private String reference;
+    private String nombre;
+    private BigDecimal valorMin;
+    private BigDecimal valorMax;
+    private String referencia;
     private Long areaId;
 }

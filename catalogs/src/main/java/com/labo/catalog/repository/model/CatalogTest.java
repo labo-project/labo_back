@@ -25,16 +25,16 @@ public class CatalogTest {
     @JoinColumn(name = "area_id", nullable = false)
     private CatalogArea area;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "name",nullable = false)
+    private String nombre;
 
     @Column(name = "min_value", nullable = false)
-    private BigDecimal minValue;
+    private BigDecimal valorMin;
 
     @Column(name = "max_value", nullable = false)
-    private BigDecimal maxValue;
+    private BigDecimal valorMax;
 
     @Column(name = "reference", nullable = false)
-    private String reference;
+    private String referencia;
     
 }

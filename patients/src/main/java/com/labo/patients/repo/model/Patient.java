@@ -19,8 +19,8 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "name" , nullable = false)
+    private String nombre;
 
     @Column(nullable = false)
     private String apellido;
@@ -35,10 +35,10 @@ public class Patient {
     private Integer edad;
 
     @Column(name = "creation_date", nullable = false)
-    private LocalDateTime creationDate;
+    private LocalDateTime fechaCreacion;
 
     @PrePersist
     protected void onCreate() {
-        creationDate = LocalDateTime.now();
+        fechaCreacion = LocalDateTime.now();
     }
 }

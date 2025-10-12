@@ -9,9 +9,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class TestCatalogTo {
     private Long id;
-    private String name;
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
-    private String reference;
+    private String nombre;
+    private BigDecimal valorMin;
+    private BigDecimal valorMax;
+    private String referencia;
     private BigDecimal valor;
 }

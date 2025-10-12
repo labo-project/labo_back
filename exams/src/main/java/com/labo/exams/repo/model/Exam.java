@@ -23,7 +23,7 @@ public class Exam {
     private Long id;
 
     @Column(name = "patient_id", nullable = false)
-    private Long patientId;
+    private Long pacienteId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -32,16 +32,16 @@ public class Exam {
     private Boolean status;
 
     @Column(name = "creation_date", nullable = false)
-    private LocalDateTime creationDate;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "completition_date", nullable = true)
-    private LocalDateTime completitionDate;
+    private LocalDateTime fechaCompletar;
 
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)
     private List<Test> tests;
 
     @PrePersist
     protected void onCreate() {
-        creationDate = LocalDateTime.now();
+        fechaCreacion = LocalDateTime.now();
     }
 }

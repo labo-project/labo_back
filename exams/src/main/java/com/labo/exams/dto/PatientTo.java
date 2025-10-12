@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class PatientTo {
     private Long id;
-    private String name;
+    private String nombre;
     private String apellido;
     private String cedula;
     private Integer edad;
-    private LocalDateTime creationDate;
+    private LocalDateTime fechaCreacion;
 }

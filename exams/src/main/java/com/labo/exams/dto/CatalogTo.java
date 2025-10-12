@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class CatalogTo {
     private Long idPrueba;
-    private String testName;
-    private BigDecimal minValue;
-    private BigDecimal maxValue;
-    private String reference;
+    private String pruebaNombre;
+    private BigDecimal valorMin;
+    private BigDecimal valorMax;
+    private String referencia;
     private Long idArea;
-    private String areaName;
+    private String areaNombre;
 }
 

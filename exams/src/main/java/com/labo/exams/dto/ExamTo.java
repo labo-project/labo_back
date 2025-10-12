@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class ExamTo {
     private Long id;
-    private Long patientId;
+    private Long pacienteId;
     private Long userId;
-    private LocalDateTime creationDate;
+    private LocalDateTime fechaCreacion;
 }

@@ -52,7 +52,7 @@ public class ExamServiceImpl implements IExamService {
     private DatosTo mapToDataTo(Exam exam, Long areaId) {
         DatosTo datosTo = new DatosTo();
         datosTo.setIdExamen(exam.getId());
-        Mono<PatientTo> patientMono = patientServiceClient.getPatientById(exam.getPatientId());
+        Mono<PatientTo> patientMono = patientServiceClient.getPatientById(exam.getPacienteId());
         PatientTo patient = patientMono.block();
         datosTo.setApellido(patient.getApellido());
         datosTo.setEstado(exam.getStatus());
@@ -85,7 +85,7 @@ public class ExamServiceImpl implements IExamService {
             return null;
         } else {
             pruebasTo.setId(test.getId());
-            pruebasTo.setNombrePrueba(catalog.getTestName());
+            pruebasTo.setNombrePrueba(catalog.getPruebaNombre());
             return pruebasTo;
         }
 
@@ -97,9 +97,9 @@ public class ExamServiceImpl implements IExamService {
                 .map(e -> {
                     ExamTo examTo = new ExamTo();
                     examTo.setId(e.getId());
-                    examTo.setPatientId(e.getPatientId());
+                    examTo.setPacienteId(e.getPacienteId());
                     examTo.setUserId(e.getUserId());
-                    examTo.setCreationDate(e.getCreationDate());
+                    examTo.setFechaCreacion(e.getFechaCreacion());
                     return examTo;
                 })
                 .collect(Collectors.toList());
@@ -136,7 +136,7 @@ public class ExamServiceImpl implements IExamService {
     public ExamReportTo buscarReportId(Long id) {
 
         var e = this.examRepo.searchExamById(id);
-        var patient = this.patientServiceClient.getPatientById(e.getPatientId()).block();
+        var patient = this.patientServiceClient.getPatientById(e.getPacienteId()).block();
         ExamReportTo reporte = new ExamReportTo();
 
         List<PruebasReportTo> pruebasList = new ArrayList<PruebasReportTo>();
@@ -144,19 +144,19 @@ public class ExamServiceImpl implements IExamService {
             PruebasReportTo p = new PruebasReportTo();
             var catalog = this.catalogServiceClient.getCatalogById(prueba.getTestId()).block();
             p.setId(prueba.getId());
-            p.setNombrePrueba(catalog.getTestName());
-            p.setReferencia(catalog.getReference());
-            p.setMinValue(catalog.getMinValue());
-            p.setMaxValue(catalog.getMaxValue());
+            p.setNombrePrueba(catalog.getPruebaNombre());
+            p.setReferencia(catalog.getReferencia());
+            p.setValorMin(catalog.getValorMin());
+            p.setValorMax(catalog.getValorMax());
             p.setValor(prueba.getResult());
-            p.setAreaName(catalog.getAreaName());
+            p.setNombreArea(catalog.getAreaNombre());
             p.setIdArea(catalog.getIdArea());
             pruebasList.add(p);
         }
 
         reporte.setExamId(e.getId());
         reporte.setPatient(patient);
-        reporte.setFechaRealizada(e.getCreationDate());
+        reporte.setFechaRealizada(e.getFechaCreacion());
         reporte.setAreas(transformar(pruebasList));
 
         return reporte;
@@ -172,15 +172,15 @@ public class ExamServiceImpl implements IExamService {
                 .map(entry -> {
                     // Get the first item to extract area name (assuming all items in group have
                     // same area name)
-                    String areaName = entry.getValue().get(0).getAreaName();
+                    String areaName = entry.getValue().get(0).getNombreArea();
 
                     // Convert each PruebasReportTo to TestCatalogTo
                     List<TestCatalogTo> tests = entry.getValue().stream()
                             .map(prueba -> new TestCatalogTo(
                                     prueba.getId(),
                                     prueba.getNombrePrueba(),
-                                    prueba.getMinValue(),
-                                    prueba.getMaxValue(),
+                                    prueba.getValorMin(),
+                                    prueba.getValorMax(),
                                     prueba.getReferencia(),
                                     prueba.getValor()))
                             .collect(Collectors.toList());

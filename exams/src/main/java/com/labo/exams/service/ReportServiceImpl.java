@@ -46,7 +46,7 @@ public class ReportServiceImpl implements IReportService {
             document.add(Chunk.NEWLINE);
 
             // Add title
-            Paragraph title = new Paragraph("LABORATORY REPORT", FontHelper.getTitleFont());
+            Paragraph title = new Paragraph("Reporte de Laboratorio", FontHelper.getTitleFont());
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
             document.add(Chunk.NEWLINE);
@@ -115,7 +115,7 @@ public class ReportServiceImpl implements IReportService {
         // Add information in 2x2 layout
         addInfoRowPair(patientInfoTable,
                 "Exam ID:", reportData.getExamId().toString(),
-                "Nombre del Paciente:", reportData.getPatient().getName() + " " + reportData.getPatient().getApellido());
+                "Nombre del Paciente:", reportData.getPatient().getNombre() + " " + reportData.getPatient().getApellido());
 
         addInfoRowPair(patientInfoTable,
                 "Cédula Paciente:",
@@ -186,12 +186,12 @@ public class ReportServiceImpl implements IReportService {
             // Add tests for this area
             for (var test : area.getTests()) {
                 // Test name
-                table.addCell(TableStyleHelper.createModernDataCell(test.getName()));
+                table.addCell(TableStyleHelper.createModernDataCell(test.getNombre()));
 
                 // Format the value and check if it's outside reference range
                 double value = test.getValor() == null ? 0 :((Number) test.getValor()).doubleValue();
-                double min = ((Number) test.getMinValue()).doubleValue();
-                double max = ((Number) test.getMaxValue()).doubleValue();
+                double min = ((Number) test.getValorMin()).doubleValue();
+                double max = ((Number) test.getValorMax()).doubleValue();
 
                 PdfPCell valueCell = TableStyleHelper.createModernDataCell(String.format("%.2f", value));
 
@@ -206,7 +206,7 @@ public class ReportServiceImpl implements IReportService {
                 table.addCell(TableStyleHelper.createModernDataCell(refValues));
 
                 // Reference unit
-                table.addCell(TableStyleHelper.createModernDataCell(test.getReference()));
+                table.addCell(TableStyleHelper.createModernDataCell(test.getReferencia()));
             }
         }
 

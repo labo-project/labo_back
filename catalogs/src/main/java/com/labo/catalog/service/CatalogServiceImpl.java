@@ -36,10 +36,10 @@ public class CatalogServiceImpl implements ICatalogService{
     public ReportPruebasTo findTest(Long id) {
         var dto = this.repo.findyByIdTest(id);
         var catalog = mapper.map(dto, ReportPruebasTo.class);
-        catalog.setAreaName(dto.getArea().getName());
+        catalog.setAreaNombre(dto.getArea().getName());
         catalog.setIdArea(dto.getArea().getId());
         catalog.setIdPrueba(id);
-        catalog.setTestName(dto.getName());
+        catalog.setPruebaNombre(dto.getNombre());
         return catalog;
     }
 
