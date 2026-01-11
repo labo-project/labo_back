@@ -10,3 +10,5 @@ Correr docker compose con
 ```sh
 docker compose up --build # o sin build una vez construido
 ```
+
+### Testing git credentials
